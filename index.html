@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geonames API Task</title>
+    <link rel="stylesheet" href="libs/css/style.css">
+</head>
+<body>
+    <div id=”preloader”></div>
+    <div>
+        <table id="table">
+            <tr>
+                <td>API Name</td>
+                <td>API Description / Inputs</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Earthquake</td>
+                <td>
+                    Returns a list of earthquakes, ordered by magnitude<br>
+                    Search by coordinates of bounding box:<br>
+                    North: <input type="number" id="selNorth">
+                    South: <input type="number" id="selSouth"><br>
+                    East: <input type="number" id="selEast">
+                    West: <input type="number" id="selWest">
+                </td>
+                <td>
+                    <button id="earthquakeBtn">Run</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Timezone</td>
+                <td>
+                    The timezone at the lat/lng with gmt offset (1. January) and dst offset (1. July)<br>
+                    Search by latitude and longitude:<br>
+                    Latitude:  <input type="number" id="selLatTime">
+                    Longitude: <input type="number" id="selLngTime">
+                </td>
+                <td>
+                    <button id="timezoneBtn">Run</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Ocean</td>
+                <td>
+                    Returns the ocean or sea for the given latitude/longitude<br>
+                    Search by latitude and longitude:<br>
+                    Latitude:  <input type="number" id="selLatOcean">
+                    Longitude: <input type="number" id="selLngOcean">
+                </td>
+                <td>
+                    <button id="oceanBtn">Run</button>
+                </td>
+            </tr>
+            <tr>
+                <td id='results' colspan="3"></td>
+            </tr>
+        </table>
+    </div>
+
+    <script type="application/javascript" src="libs/js/jquery-3.7.1.min.js"></script>
+	<script type="application/javascript" src="libs/js/script.js"></script>
+
+</body>
+</html>
