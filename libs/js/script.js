@@ -53,7 +53,9 @@ $('#timezoneBtn').on('click', function() {
 
 
 $('#oceanBtn').on('click', function() {
-    
+    console.log($('#selLatOcean').val())
+    console.log($('#selLngOcean').val())
+    /*
     $.ajax({
         url: "libs/php/getOceanInfo.php",
         type: 'GET',
@@ -75,4 +77,5 @@ $('#oceanBtn').on('click', function() {
             console.log(textStatus, errorThrown)
         }
     }); 
+    */
 });
