@@ -28,7 +28,6 @@
 	} else {
 		$output['data'] = 'No Ocean at these co-ordinates';
 	}
-	
 
 	header('Content-Type: application/json; charset=UTF-8');
 
