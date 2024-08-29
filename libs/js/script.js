@@ -1,7 +1,7 @@
 $('#earthquakeBtn').on('click', function() {
     $.ajax({
         url: "libs/php/getEarthquakeInfo.php",
-        type: 'GET',
+        type: 'POST',
         dataType: 'json',
         data: {
             north: $('#selNorth').val(),
@@ -29,7 +29,7 @@ $('#earthquakeBtn').on('click', function() {
 $('#timezoneBtn').on('click', function() {
     $.ajax({
         url: "libs/php/getTimezoneInfo.php",
-        type: 'GET',
+        type: 'POST',
         dataType: 'json',
         data: {
             lat: $('#selLatTime').val(),
@@ -56,7 +56,7 @@ $('#oceanBtn').on('click', function() {
     
     $.ajax({
         url: "libs/php/getOceanInfo.php",
-        type: 'GET',
+        type: 'POST',
         dataType: 'text',
         data: {
             lat: $('#selLatOcean').val(),
