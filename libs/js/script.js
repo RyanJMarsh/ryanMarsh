@@ -36,8 +36,7 @@ $('#timezoneBtn').on('click', function() {
             lng: $('#selLngTime').val()
         },
         success: function(result) {
-            console.log(result)
-            console.log(result.status)
+
             if (result.status.name == "ok") {
                 
                 $('#results').html(JSON.stringify(result['data']));
@@ -64,8 +63,7 @@ $('#oceanBtn').on('click', function() {
             lng: $('#selLngOcean').val()
         },
         success: function(result) {
-            console.log(result)
-            console.log(result.status)
+
             if (result.status.name == "ok") {
                 
                 $('#results').html(JSON.stringify(result['data']));
