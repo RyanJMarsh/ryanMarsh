@@ -36,7 +36,8 @@ $('#timezoneBtn').on('click', function() {
             lng: $('#selLngTime').val()
         },
         success: function(result) {
-
+            console.log(result)
+            console.log(result.status)
             if (result.status.name == "ok") {
                 
                 $('#results').html(JSON.stringify(result['data']));
@@ -57,13 +58,14 @@ $('#oceanBtn').on('click', function() {
     $.ajax({
         url: "libs/php/getOceanInfo.php",
         type: 'POST',
-        dataType: 'text',
+        dataType: 'json',
         data: {
             lat: $('#selLatOcean').val(),
             lng: $('#selLngOcean').val()
         },
         success: function(result) {
             console.log(result)
+            console.log(result.status)
             if (result.status.name == "ok") {
                 
                 $('#results').html(JSON.stringify(result['data']));
