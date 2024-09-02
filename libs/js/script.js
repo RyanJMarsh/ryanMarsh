@@ -13,7 +13,7 @@ $('#earthquakeBtn').on('click', function() {
 
             if (result.status.name == "ok") {
                 
-                $('#results').html(JSON.stringify(result['data'], null, 4));
+                $('#results').html(JSON.stringify(result['data']));
         
             }
         
