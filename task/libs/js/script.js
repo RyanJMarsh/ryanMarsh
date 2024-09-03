@@ -10,11 +10,10 @@ $('#earthquakeBtn').on('click', function() {
             west: $('#selWest').val()
         },
         success: function(result) {
-
-            if (result.status.name == "ok") {
-                
-                $('#results').html(JSON.stringify(result['data']));
-        
+            if (result.data == 'No Earthquakes at these co-ordinates') { 
+                $('#earthquakeResults').html(result.data);
+            } else {
+                $('#earthquakeResults').html('No. of Earthquakes: ' + result.data.length);
             }
         
         },
@@ -37,12 +36,9 @@ $('#timezoneBtn').on('click', function() {
         },
         success: function(result) {
 
-            if (result.status.name == "ok") {
-                
-                $('#results').html(JSON.stringify(result['data']));
-
+            if (result.status.name == "ok") {                
+                $('#timezoneResults').html('Time: ' + result.data.time + '<br>Timezone: ' + result.data.timezoneId);
             }
-        
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(textStatus, errorThrown)
@@ -63,13 +59,11 @@ $('#oceanBtn').on('click', function() {
             lng: $('#selLngOcean').val()
         },
         success: function(result) {
-
-            if (result.status.name == "ok") {
-                
-                $('#results').html(JSON.stringify(result['data']));
-
-            }
-        
+            if(result.data == 'No Ocean at these co-ordinates') {
+                $('#oceanResults').html(result.data);
+            } else {
+                $('#oceanResults').html('Ocean: ' + result.data.name);
+            }                    
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(textStatus, errorThrown)

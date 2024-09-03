@@ -22,12 +22,13 @@
 	$output['status']['code'] = "200";
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
-	$output['status']['returnedIn'] = intval((microtime(true) - $executionStartTime) * 1000) . " ms";
-    if (array_key_exists('ocean', $decode)) {
+	$output['status']['returnedIn'] = intval((microtime(true) - $executionStartTime) * 1000) . " ms";	
+	if (array_key_exists('ocean', $decode)) {
 		$output['data'] = $decode['ocean'];
 	} else {
 		$output['data'] = 'No Ocean at these co-ordinates';
 	}
+	
 
 	header('Content-Type: application/json; charset=UTF-8');
 
