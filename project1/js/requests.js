@@ -118,3 +118,22 @@ function getWeatherInfo(lat, lng) {
   })
   return weatherInfo;
 }
+
+function getAirportsByCca2(cca2) {
+  let airports;
+  $.ajax({
+    dataType: "json",
+    async: false,
+    url: "./data/getAirportsByCca2.php",
+    data: {
+      cca2: cca2
+    },
+    success: function (data) {
+      airports = data.data;
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.log(textStatus, errorThrown);
+    },
+  })
+  return airports;
+}

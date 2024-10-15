@@ -10,6 +10,11 @@ const tiles = L.tileLayer(
   }
 ).addTo(map);
 
+let marker;
+let polygon;
+let country;
+let airports;
+
 const infoBtn = L.easyButton("fa-info fa-xl", function (btn, map) {
   $("#infoModal").modal("show");
 });
@@ -20,7 +25,19 @@ const weatherBtn = L.easyButton("fa-cloud fa-xl", function (btn, map) {
 const airportBtn = L.easyButton(
   "fa-plane-departure fa-xl",
   function (btn, map) {
-    $("#airportModal").modal("show");
+    airports.forEach(airport => {
+      L.marker([airport.latitude, airport.longitude])
+      .addTo(map)
+      .bindPopup(`${airport.name}`)
+    })
+    /*
+    for(let i=0; i<airports.length;i++) {
+      L.marker([airports[i].latitude, airports[i].longitude])
+      .addTo(map)
+      .bindPopup(`${airports[i].name}`);
+    }
+      */
+    
   }
 );
 
@@ -31,9 +48,6 @@ const citiesBtn = L.easyButton("fa-city fa-xl", function (btn, map) {
 const imagesBtn = L.easyButton("fa-images fa-xl", function (btn, map) {
   $("#imagesModal").modal("show");
 });
-let marker;
-let polygon;
-let country;
 
 function populateDropdown() {
   let countryList = getCountryList();
@@ -54,13 +68,14 @@ function selectFromDropdown() {
   }
 
   const info = JSON.parse($("#dropdown").val());
+
   country = {
     name: info.name,
     cca2: info.cca2,
     cca3: info.cca3,
     capital: info.capital,
   };
-  
+
   //borders
 
   const borderLatlngs = getCountryBordersFromCca3(country.cca3);
@@ -82,17 +97,17 @@ function selectFromDropdown() {
       .openPopup();
   }
   map.removeLayer(infoBtn);
-  const countryInfo = getCountryInfoFromCca3(country.cca3)
+  const countryInfo = getCountryInfoFromCca3(country.cca3);
   const languagesArr = Object.values(countryInfo.languages);
   const languages = languagesArr.join(", ");
-  const currency = Object.values(countryInfo.currency)
+  const currency = Object.values(countryInfo.currency);
   infoBtn.addTo(map);
-  $("#infoFlag").html(`<img src=${countryInfo.flag} height="100">`)
-  $("#infoCoat").html(`<img src=${countryInfo.coat} height="100">`)
-  $("#infoName").html(country.name)
-  $("#infoContinent").html(countryInfo.continent[0])
-  $("#infoPopulation").html(countryInfo.population.toLocaleString())
-  $("#infoLanguages").html(languages)
+  $("#infoFlag").html(`<img src=${countryInfo.flag} height="100">`);
+  $("#infoCoat").html(`<img src=${countryInfo.coat} height="100">`);
+  $("#infoName").html(country.name);
+  $("#infoContinent").html(countryInfo.continent[0]);
+  $("#infoPopulation").html(countryInfo.population.toLocaleString());
+  $("#infoLanguages").html(languages);
   $("#infoCurrency").empty();
   $.each(currency, function (i, p) {
     $("#infoCurrency").append(`${p.name}, ${p.symbol} <br>`);
@@ -100,11 +115,21 @@ function selectFromDropdown() {
 
   map.removeLayer(weatherBtn);
   weatherBtn.addTo(map);
-  const weatherInfo = getWeatherInfo(capitalLatlngs[0], capitalLatlngs[1])
-  const sunrise = new Date(weatherInfo.sunrise * 1000).toISOString().slice(11, -5);
-  const sunset = new Date(weatherInfo.sunset * 1000).toISOString().slice(11, -5);
-  $("#weatherDesc").html(`<img src='http://openweathermap.org/img/w/${weatherInfo.desc_icon}.png'> ${weatherInfo.desc}`);
-  $("#weatherTemp").html(`${Math.round(weatherInfo.temp*10)/10}°C but feels like ${Math.round(weatherInfo.feels_like+10)/10}°C`);
+  const weatherInfo = getWeatherInfo(capitalLatlngs[0], capitalLatlngs[1]);
+  const sunrise = new Date(weatherInfo.sunrise * 1000)
+    .toISOString()
+    .slice(11, -5);
+  const sunset = new Date(weatherInfo.sunset * 1000)
+    .toISOString()
+    .slice(11, -5);
+  $("#weatherDesc").html(
+    `<img src='http://openweathermap.org/img/w/${weatherInfo.desc_icon}.png'> ${weatherInfo.desc}`
+  );
+  $("#weatherTemp").html(
+    `${Math.round(weatherInfo.temp * 10) / 10}°C but feels like ${
+      Math.round(weatherInfo.feels_like + 10) / 10
+    }°C`
+  );
   $("#weatherHumid").html(`${weatherInfo.humidity}%`);
   $("#weatherSpeed").html(`${weatherInfo.wind_speed}m/s`);
   $("#weatherSunrise").html(`Sunrise: ${sunrise}`);
@@ -112,6 +137,7 @@ function selectFromDropdown() {
 
   map.removeLayer(airportBtn);
   airportBtn.addTo(map);
+  airports = getAirportsByCca2(country.cca2);
 
   map.removeLayer(citiesBtn);
   citiesBtn.addTo(map);
