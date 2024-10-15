@@ -3,7 +3,7 @@
 	ini_set('display_errors', 'On');
 	error_reporting(E_ALL);
 
-	$executionStartTime = microtime(true);
+
 
     
 	$url='https://countriesnow.space/api/v0.1/countries/capital';

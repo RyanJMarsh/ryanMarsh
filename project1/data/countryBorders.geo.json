@@ -3393,7 +3393,7 @@
       "properties": {
         "name": "N. Cyprus",
         "iso_a2": "-99",
-        "iso_a3": "-99",
+        "iso_a3": "TRNC",
         "iso_n3": "-99"
       },
       "geometry": {
@@ -12186,8 +12186,8 @@
       "type": "Feature",
       "properties": {
         "name": "Kosovo",
-        "iso_a2": "-99",
-        "iso_a3": "-99",
+        "iso_a2": "XK",
+        "iso_a3": "XKX",
         "iso_n3": "-99"
       },
       "geometry": {

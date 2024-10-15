@@ -10,3 +10,16 @@ body {
   margin: 0;
   padding: 0;
 }
+
+#selectContainer {
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  padding: 11px 0;
+}
+
+#dropdown {
+  width: 200px;
+  margin: 0 auto;
+}

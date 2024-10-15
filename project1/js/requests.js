@@ -47,7 +47,7 @@ function getCapitals(countryList) {
     success: function ({ data }) {
       countryList.forEach((country) => {
         data.forEach((countryData) => {
-          if (country.name == countryData.name) {
+          if (country.cca3 == countryData.iso3) {
             country.capital = countryData.capital;
           }
         });
@@ -60,6 +60,61 @@ function getCapitals(countryList) {
   return countryList;
 }
 
-function getLatlngsByName() {
-  
+function getLatlngsByName(name) {
+  let latlngs;
+  $.ajax({
+    dataType: "json",
+    async: false,
+    url: "./data/getLatlngByNameData.php",
+    data: {
+      name: name,
+    },
+    success: function (data) {
+      latlngs = data;
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.log(textStatus, errorThrown);
+    },
+  });
+
+  return latlngs;
+}
+
+function getCountryInfoFromCca3(cca3) {
+  let countryInfo;
+  $.ajax({
+    dataType: "json",
+    async: false,
+    url: "./data/getCountryInfoFromCodeData.php",
+    data: {
+      cca3: cca3,
+    },
+    success: function (data) {
+      countryInfo = data.data;
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.log(textStatus, errorThrown);
+    },
+  })
+  return countryInfo;
+}
+
+function getWeatherInfo(lat, lng) {
+  let weatherInfo;
+  $.ajax({
+    dataType: "json",
+    async: false,
+    url: "./data/getWeatherDataFromCoords.php",
+    data: {
+      lat: lat,
+      lng: lng
+    },
+    success: function (data) {
+      weatherInfo = data.data;
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.log(textStatus, errorThrown);
+    },
+  })
+  return weatherInfo;
 }
