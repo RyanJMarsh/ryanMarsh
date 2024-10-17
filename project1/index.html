@@ -45,10 +45,13 @@
   </head>
   <body>
     <span id="selectContainer">
-    <select id="dropdown" class="form-select">
-      <option>Select a Country...</option>
-    </select>
+      <select id="dropdown" class="form-select">
+        <option>Select a Country...</option>
+      </select>
     </span>
+
+    <div id="loading" class="align-middle">Loading...</div>
+
     <div id="map"></div>
 
     <div id="infoModal" class="modal" data-bs-backdrop="false" tabindex="-1">
@@ -134,8 +137,8 @@
                 <td class="text-end" id="weatherSpeed"></td>
               </tr>
               <tr>
-                <td id="weatherSunrise">Sunrise: </td>
-                <td class="text-end" id="weatherSunset">Sunset: </td>
+                <td id="weatherSunrise">Sunrise:</td>
+                <td class="text-end" id="weatherSunset">Sunset:</td>
               </tr>
             </table>
           </div>
@@ -151,12 +154,12 @@
         </div>
       </div>
     </div>
-    
-    <div id="citiesModal" class="modal" data-bs-backdrop="false" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
+
+    <div id="newsModal" class="modal" data-bs-backdrop="false" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content shadow">
           <div class="modal-header bg-success bg-gradient text-white">
-            <h5 class="modal-title">Cities</h5>
+            <h5 class="modal-title">News</h5>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -164,7 +167,9 @@
               aria-label="Close"
             ></button>
           </div>
-          <div class="modal-body"></div>
+          <div class="modal-body">
+            <table class="table table-striped" id="newsArticles"></table>
+          </div>
           <div class="modal-footer">
             <button
               type="button"
@@ -177,11 +182,11 @@
         </div>
       </div>
     </div>
-    <div id="imagesModal" class="modal" data-bs-backdrop="false" tabindex="-1">
+    <div id="borderModal" class="modal" data-bs-backdrop="false" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content shadow">
           <div class="modal-header bg-success bg-gradient text-white">
-            <h5 class="modal-title">Images</h5>
+            <h5 class="modal-title">Neighbouring Countries</h5>
             <button
               type="button"
               class="btn-close btn-close-white"
@@ -189,7 +194,42 @@
               aria-label="Close"
             ></button>
           </div>
-          <div class="modal-body"></div>
+          <div class="modal-body">
+            <table class="table table-striped" id="borderCountries"></table>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-success btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      id="currencyModal"
+      class="modal"
+      data-bs-backdrop="false"
+      tabindex="-1"
+    >
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow">
+          <div class="modal-header bg-success bg-gradient text-white">
+            <h5 class="modal-title">Currency Exchange</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <h6>Exchange Rates from USD</h6>
+            <table class="table table-striped" id="currencyExchange"></table>
+          </div>
           <div class="modal-footer">
             <button
               type="button"
@@ -203,6 +243,8 @@
       </div>
     </div>
     <script type="application/javascript" src="./js/requests.js"></script>
+    <script type="application/javascript" src="./js/buttons.js"></script>
+    <script type="application/javascript" src="./js/selectCountry.js"></script>
     <script type="application/javascript" src="./js/script.js"></script>
   </body>
 </html>

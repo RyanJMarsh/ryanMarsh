@@ -26,13 +26,14 @@
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = intval((microtime(true) - $executionStartTime) * 1000) . " ms";
 
-	
+	$output['data']['borders'] = $decode['borders'];
     $output['data']['flag'] = $decode['flag'];
 	$output['data']['coat'] = $decode['coatOfArms'];
 	$output['data']['languages'] = $decode['languages'];
 	$output['data']['population'] = $decode['population'];
 	$output['data']['continent'] = $decode['continents'];
 	$output['data']['currency'] = $decode['currencies'];
+	$output['data']['timezone'] = $decode['timezones'];
 
 	header('Content-Type: application/json; charset=UTF-8');
 

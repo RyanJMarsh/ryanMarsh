@@ -36,7 +36,7 @@
 		15
 	);
 
-	$output['data'] = $array;
+	$output['data'] = $decode;
 
 	header('Content-Type: application/json; charset=UTF-8');
 
