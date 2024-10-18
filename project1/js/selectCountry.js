@@ -1,4 +1,5 @@
 function selectCountry() {
+  
   if (marker.length) {
     marker.forEach((mark) => {
       map.removeLayer(mark);
@@ -143,6 +144,7 @@ function selectCountry() {
       );
     });
   }
-
+  
   map.fitBounds(polygon.getBounds());
+
 }

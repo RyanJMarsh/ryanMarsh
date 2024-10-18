@@ -16,9 +16,18 @@
 
 	curl_close($ch);
 
-	$decode = json_decode($result,true);	
-
-    $output = $decode['results'][0]['components']['country'];
+	$decode = json_decode($result,true);
+	
+	if(array_key_exists('body_of_water', $decode['results'][0]['components'])) {
+		$output['name'] = $decode['results'][0]['components']['body_of_water'];
+		$output['is_country'] = false;
+	} else if ($decode['results'][0]['components']['continent'] == 'Antarctica') {
+		$output['name'] = $decode['results'][0]['components']['continent'];
+		$output['is_country'] = false;
+	} else {
+		$output['name'] = $decode['results'][0]['components']['country'];
+		$output['is_country'] = true;
+	}
 	
 
 	header('Content-Type: application/json; charset=UTF-8');

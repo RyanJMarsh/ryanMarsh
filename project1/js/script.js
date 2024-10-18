@@ -30,29 +30,93 @@ function populateDropdown() {
 
 function onLocationFound(e) {
   const countryName = getCountryNameFromCoords(e.latitude, e.longitude);
-  let cca2;
-  let cca3;
-  let capital;
-  for (let i = 0; i < countryList.length; i++) {
-    if (countryList[i].name == countryName) {
-      cca2 = countryList[i].cca2;
-      cca3 = countryList[i].cca3;
-      capital = countryList[i].capital;
+  if (countryName.is_country) {
+    let cca2;
+    let cca3;
+    let capital;
+
+    for (let i = 0; i < countryList.length; i++) {
+      if (countryList[i].name == countryName.name) {
+        cca2 = countryList[i].cca2;
+        cca3 = countryList[i].cca3;
+        capital = countryList[i].capital;
+      }
     }
+
+    country = {
+      name: countryName.name,
+      cca2: cca2,
+      cca3: cca3,
+      capital: capital,
+    };
+
+    selectCountry();
+  } else {
+    if (marker.length) {
+      marker.forEach((mark) => {
+        map.removeLayer(mark);
+      });
+      marker = [];
+    }
+    if (capitalMarker) {
+      map.removeLayer(capitalMarker);
+    }
+    if (polygon) {
+      map.removeLayer(polygon);
+    }
+    capitalMarker = L.marker(e.latlng)
+      .addTo(map)
+      .bindPopup(`${countryName.name}`)
+      .openPopup();
   }
-
-  country = {
-    name: countryName,
-    cca2: cca2,
-    cca3: cca3,
-    capital: capital,
-  };
-
-  selectCountry();
 }
 
 function onLocationError(e) {
   alert(e.message);
+}
+
+function onMapClick(e) {
+  const countryName = getCountryNameFromCoords(e.latlng.lat, e.latlng.lng);
+
+  if (countryName.is_country) {
+    let cca2;
+    let cca3;
+    let capital;
+
+    for (let i = 0; i < countryList.length; i++) {
+      if (countryList[i].name == countryName.name) {
+        cca2 = countryList[i].cca2;
+        cca3 = countryList[i].cca3;
+        capital = countryList[i].capital;
+      }
+    }
+
+    country = {
+      name: countryName.name,
+      cca2: cca2,
+      cca3: cca3,
+      capital: capital,
+    };
+
+    selectCountry();
+  } else {
+    if (marker.length) {
+      marker.forEach((mark) => {
+        map.removeLayer(mark);
+      });
+      marker = [];
+    }
+    if (capitalMarker) {
+      map.removeLayer(capitalMarker);
+    }
+    if (polygon) {
+      map.removeLayer(polygon);
+    }
+    capitalMarker = L.marker(e.latlng)
+      .addTo(map)
+      .bindPopup(`${countryName.name}`)
+      .openPopup();
+  }
 }
 
 function selectFromDropdown() {
@@ -84,11 +148,10 @@ function selectFromDropdown() {
   }
 }
 
-$(document).ready(function () {
-  populateDropdown();
-  $("#loading").hide();
-  map.on("locationfound", onLocationFound);
-  map.on("locationerror", onLocationError);
-  $("#dropdown").on("change keyup", selectFromDropdown);
-  map.locate({ setView: true, maxZoom: 16 });
-});
+populateDropdown();
+map.on("locationfound", onLocationFound);
+map.on("locationerror", onLocationError);
+map.on("click", onMapClick);
+$("#dropdown").on("change keyup", selectFromDropdown);
+
+map.locate({ setView: true, maxZoom: 16 });
