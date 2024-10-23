@@ -24,20 +24,27 @@ body {
   margin: 0 auto;
 }
 
-.loading-spinner{
-  width:30px;
-  height:30px;
-  border:2px solid indigo;
-  border-radius:50%;
-  border-top-color:#0001;
-  display:inline-block;
-  animation:loadingspinner .7s linear infinite;
+#preloader {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 1000;
 }
-@keyframes loadingspinner{
-  0%{
-    transform:rotate(0deg)
+
+.loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 2px solid indigo;
+  border-radius: 50%;
+  border-top-color: #0001;
+  display: inline-block;
+  animation: loadingspinner 0.7s linear infinite;
+}
+@keyframes loadingspinner {
+  0% {
+    transform: rotate(0deg);
   }
-  100%{
-    transform:rotate(360deg)
+  100% {
+    transform: rotate(360deg);
   }
 }

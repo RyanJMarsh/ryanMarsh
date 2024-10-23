@@ -35,6 +35,8 @@
       href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css"
     />
     <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/MarkerCluster.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.min.js"></script>
     <!-- font-awesome -->
     <link
       rel="stylesheet"
@@ -44,6 +46,7 @@
     <title>Gazetteer</title>
   </head>
   <body>
+    <span id="preloader" class="mx-auto loading-spinner"></span>
     <span id="selectContainer">
       <select id="dropdown" class="form-select">
         <option>Select a Country...</option>
@@ -55,7 +58,7 @@
         <div class="modal-content">
           <div class="modal-body text-center">
             <div class="loading-spinner mb-2"></div>
-             <div>Loading...</div>
+            <div>Loading...</div>
           </div>
         </div>
       </div>
@@ -106,7 +109,7 @@
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-outline-success btn-sm"
+              class="btn btn-outline-danger btn-sm"
               data-bs-dismiss="modal"
             >
               Close
@@ -154,7 +157,7 @@
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-outline-success btn-sm"
+              class="btn btn-outline-danger btn-sm"
               data-bs-dismiss="modal"
             >
               Close
@@ -182,7 +185,7 @@
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-outline-success btn-sm"
+              class="btn btn-outline-danger btn-sm"
               data-bs-dismiss="modal"
             >
               Close
@@ -209,7 +212,7 @@
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-outline-success btn-sm"
+              class="btn btn-outline-danger btn-sm"
               data-bs-dismiss="modal"
             >
               Close
@@ -236,13 +239,45 @@
             ></button>
           </div>
           <div class="modal-body">
-            <h6>Exchange Rates from USD</h6>
-            <table class="table table-striped" id="currencyExchange"></table>
+            <div class="container text-center">
+              <div class="row">
+                <div class="col">
+                  <h6>USD =></h6>
+                </div>
+                <div class="col">
+                  <select id="currencyExchange"></select>
+                </div>
+              </div>
+              <div class="row mt-2">
+                <div class="col">
+                  <h6>1 =></h6>
+                </div>
+                <div class="col">
+                  <h6 id="currencyExchangeRate"></h6>
+                </div>
+              </div>
+              <form class="mt-2">
+                <input type="text" id="toConvert" value="1">
+                <input checked type="radio" id="fromUSD" name="currency" value="for">
+                <label for="fromUSD">From USD</label>
+                <input type="radio" id="toUSD" name="currency" value="to">
+                <label for="toUSD">To USD</label>
+              </form>
+              <div class="row mt-2">
+                <div class="col">
+                  <h5 class="mt-2" id="currencyExchangeResult"></h6>
+                </div>
+                <div class="col">
+                  <button type="button" id="currencyButton" class="btn btn-outline-success">Convert</button>
+                </div>
+              </div>
+              
+            </div>
           </div>
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-outline-success btn-sm"
+              class="btn btn-outline-danger btn-sm"
               data-bs-dismiss="modal"
             >
               Close
@@ -251,9 +286,6 @@
         </div>
       </div>
     </div>
-    <script type="application/javascript" src="./js/requests.js"></script>
-    <script type="application/javascript" src="./js/buttons.js"></script>
-    <script type="application/javascript" src="./js/selectCountry.js"></script>
     <script type="application/javascript" src="./js/script.js"></script>
   </body>
 </html>
