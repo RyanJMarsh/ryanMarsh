@@ -5,7 +5,7 @@
 
 	$executionStartTime = microtime(true);
 
-	$url='https://api.api-ninjas.com/v1/airports?country=' . $_REQUEST['cca2'];
+	$url='https://api.api-ninjas.com/v1/city?limit=30&country=' . $_REQUEST['cca2'];
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);

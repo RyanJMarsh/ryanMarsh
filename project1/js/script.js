@@ -1,3 +1,10 @@
+import '../node_modules/jquery/dist/jquery.js';
+import '../node_modules/bootstrap/dist/js/bootstrap.js';
+import '../node_modules/leaflet/dist/leaflet.js';
+import '../node_modules/leaflet-easybutton/src/easy-button.js'
+import '../node_modules/leaflet.markercluster/dist/leaflet.markercluster.js';
+
+
 $(window).on("load", function () {
   $("#preloader")
     .delay(1000)
@@ -7,10 +14,12 @@ $(window).on("load", function () {
 });
 
 let airports = new L.MarkerClusterGroup();
+let cities = new L.MarkerClusterGroup();
 let capitalMarker;
 let polygon;
 let country;
 let airportsMarks = [];
+let citiesMarks = [];
 let countryList;
 
 const streets = L.tileLayer(
@@ -34,6 +43,7 @@ const basemaps = {
 };
 const overlayMaps = {
   Airports: airports,
+  Cities: cities
 };
 const map = L.map("map", {
   layers: [streets],
@@ -46,7 +56,7 @@ function populateDropdown() {
   countryList = getCapitals(countryList);
   $.each(countryList, function (i, p) {
     $("#dropdown").append(
-      $("<option></option>").val(JSON.stringify(p)).html(p.name)
+      $(`<option id=${p.name}></option>`).val(JSON.stringify(p)).html(p.name)
     );
   });
 }
@@ -72,7 +82,11 @@ function onLocationFound(e) {
       cca3: cca3,
       capital: capital,
     };
+
+    
     selectCountry();
+    
+
   } else {
     if (capitalMarker) {
       map.removeLayer(capitalMarker);
@@ -113,6 +127,7 @@ function onMapClick(e) {
     capital: capital,
   };
   if (country.cca3) {
+    
     selectCountry();
   } else {
     if (capitalMarker) {
@@ -245,7 +260,7 @@ function selectCountry() {
   $("#weatherSunrise").html(`Sunrise: ${sunrise}`);
   $("#weatherSunset").html(`Sunset: ${sunset}`);
 
-  //airport modal
+  //airport markers
 
   const airportsList = getAirportsByCca2(country.cca2);
   airportsList.forEach((airport) => {
@@ -254,6 +269,16 @@ function selectCountry() {
     airportsMarks.push(airportMark);
   });
   airports.addLayers(airportsMarks);
+
+  //city markers
+
+  const citiesList = getCitiesByCca2(country.cca2)
+  citiesList.forEach((city) => {
+    const cityMark = L.marker([city.latitude, city.longitude]);
+    cityMark.bindPopup(`${city.name}`);
+    citiesMarks.push(cityMark);
+  });
+  cities.addLayers(citiesMarks);
 
   //news modal
   map.removeLayer(newsBtn);
@@ -316,6 +341,7 @@ function selectCountry() {
     const rate = $("#currencyExchange").val();
     $("#currencyExchangeRate").html(rate);
   }
+  $('#dropdown').val(JSON.stringify(country))
   map.fitBounds(polygon.getBounds());
 }
 
@@ -461,6 +487,25 @@ function getAirportsByCca2(cca2) {
   return airports;
 }
 
+function getCitiesByCca2(cca2) {
+  let cities;
+  $.ajax({
+    dataType: "json",
+    async: false,
+    url: "./data/getCitiesByCca2.php",
+    data: {
+      cca2,
+    },
+    success: function (data) {
+      cities = data.data;
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.log(textStatus, errorThrown);
+    },
+  });
+  return cities;
+}
+
 function getListOfCurrencies() {
   let list;
   $.ajax({
@@ -548,7 +593,7 @@ const newsBtn = L.easyButton("fa-newspaper fa-xl", function (btn, map) {
   $("#newsModal").modal("show");
 });
 
-const borderBtn = L.easyButton("fa-road-barrier fa-xl", function (btn, map) {
+const borderBtn = L.easyButton("fa-border-style fa-xl", function (btn, map) {
   $("#borderModal").modal("show");
 });
 
