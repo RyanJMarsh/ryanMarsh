@@ -26,7 +26,7 @@
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = intval((microtime(true) - $executionStartTime) * 1000) . " ms";
-
+	
     $output['data']['desc'] = $decode['weather'][0]['description'];
     $output['data']['desc_icon'] = $decode['weather'][0]['icon'];
     $output['data']['temp'] = $decode['main']['temp'];
