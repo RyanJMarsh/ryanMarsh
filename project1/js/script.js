@@ -245,7 +245,7 @@ $(document).ready(function () {
     }
 
     //info modal
-    map.removeLayer(infoBtn);
+
     const countryInfo = getCountryInfoFromCca3(country.cca3);
 
     const languagesArr = Object.values(countryInfo.languages);
@@ -264,27 +264,21 @@ $(document).ready(function () {
     });
 
     //weather modal
-    map.removeLayer(weatherBtn);
-    //weatherBtn.addTo(map);
-    const weatherInfo = getWeatherInfo(capitalLatlngs[0], capitalLatlngs[1]);
-    const sunrise = new Date(weatherInfo.sunrise * 1000)
-      .toISOString()
-      .slice(11, -5);
-    const sunset = new Date(weatherInfo.sunset * 1000)
-      .toISOString()
-      .slice(11, -5);
+
+    const weatherInfo = getWeatherInfo(
+      `${capitalLatlngs[0]},${capitalLatlngs[1]}`
+    );
+
     $("#weatherDesc").html(
-      `<img src='http://openweathermap.org/img/w/${weatherInfo.desc_icon}.png'> ${weatherInfo.desc}`
+      `<img src='${weatherInfo.icon}'> ${weatherInfo.condition}`
     );
     $("#weatherTemp").html(
       `${Math.round(weatherInfo.temp * 10) / 10}°C but feels like ${
-        Math.round(weatherInfo.feels_like + 10) / 10
+        Math.round(weatherInfo.feelslike * 10) / 10
       }°C`
     );
     $("#weatherHumid").html(`${weatherInfo.humidity}%`);
-    $("#weatherSpeed").html(`${weatherInfo.wind_speed}m/s`);
-    $("#weatherSunrise").html(`Sunrise: ${sunrise}`);
-    $("#weatherSunset").html(`Sunset: ${sunset}`);
+    $("#weatherSpeed").html(`${weatherInfo.windspeed}m/s`);
 
     //airport markers
 
@@ -307,8 +301,7 @@ $(document).ready(function () {
     cities.addLayers(citiesMarks);
 
     //news modal
-    map.removeLayer(newsBtn);
-    //newsBtn.addTo(map);
+
     const countryName = `${country.name}`.replace(/ /g, "+");
     const news = getLatestNews(countryName).articles;
 
@@ -324,8 +317,7 @@ $(document).ready(function () {
     }
 
     //border neighbours modal
-    map.removeLayer(borderBtn);
-    //borderBtn.addTo(map);
+
     $("#borderCountries").empty();
     for (let i = 0; i < countryInfo.borders.length; i++) {
       for (let j = 0; j < countryList.length; j++) {
@@ -340,8 +332,7 @@ $(document).ready(function () {
     }
 
     //currency modal
-    map.removeLayer(currencyBtn);
-    //currencyBtn.addTo(map);
+
     $("#currencyExchange").empty();
     $("#currencyExchangeRate").empty();
     const list = getListOfCurrencies();
@@ -474,15 +465,14 @@ $(document).ready(function () {
     return countryInfo;
   }
 
-  function getWeatherInfo(lat, lng) {
+  function getWeatherInfo(latlng) {
     let weatherInfo;
     $.ajax({
       dataType: "json",
       async: false,
       url: "./data/getWeatherDataFromCoords.php",
       data: {
-        lat,
-        lng,
+        latlng,
       },
       success: function (data) {
         weatherInfo = data.data;
@@ -605,6 +595,4 @@ $(document).ready(function () {
     });
     return info;
   }
-
-  // Map Buttons
 });

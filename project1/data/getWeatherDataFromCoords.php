@@ -6,7 +6,7 @@
 	$executionStartTime = microtime(true);
 
     
-	$url='https://api.openweathermap.org/data/2.5/weather?lat=' . $_REQUEST['lat'] . '&lon=' . $_REQUEST['lng'] . '&units=metric&appid=34a8b81c78cdb95ea9be1850235bc5b0';
+	$url='https://api.weatherapi.com/v1/current.json?key=19b73301755b441b925145921242810&q=' . $_REQUEST['latlng'];
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -27,15 +27,12 @@
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = intval((microtime(true) - $executionStartTime) * 1000) . " ms";
 	
-    $output['data']['desc'] = $decode['weather'][0]['description'];
-    $output['data']['desc_icon'] = $decode['weather'][0]['icon'];
-    $output['data']['temp'] = $decode['main']['temp'];
-    $output['data']['feels_like'] = $decode['main']['feels_like'];
-    $output['data']['humidity'] = $decode['main']['humidity'];
-    $output['data']['wind_speed'] = $decode['wind']['speed'];
-    $output['data']['sunrise'] = $decode['sys']['sunrise'];
-    $output['data']['sunset'] = $decode['sys']['sunset'];
-
+    $output['data']['condition'] = $decode['current']['condition']['text'];
+	$output['data']['icon'] = $decode['current']['condition']['icon'];
+	$output['data']['temp'] = $decode['current']['temp_c'];
+	$output['data']['feelslike'] = $decode['current']['feelslike_c'];
+	$output['data']['humidity'] = $decode['current']['humidity'];
+	$output['data']['windspeed'] = $decode['current']['wind_mph'];
 
 	header('Content-Type: application/json; charset=UTF-8');
 
