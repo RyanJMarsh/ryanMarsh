@@ -6,14 +6,32 @@ $(window).on("load", function () {
     });
 });
 
-let airports = new L.MarkerClusterGroup();
-let cities = new L.MarkerClusterGroup();
+let airports = new L.MarkerClusterGroup({
+  polygonOptions: {
+    fillColor: "#fff",
+    color: "#000",
+    weight: 2,
+    opacity: 1,
+    fillOpacity: 0.5
+  }
+});
+let cities = new L.MarkerClusterGroup({
+  polygonOptions: {
+    fillColor: "#fff",
+    color: "#000",
+    weight: 2,
+    opacity: 1,
+    fillOpacity: 0.5
+  }
+});
 let capitalMarker;
 let polygon;
 let country;
 let airportsMarks = [];
 let citiesMarks = [];
 let countryList;
+
+// Buttons
 
 const infoBtn = L.easyButton("fa-info fa-xl", function (btn, map) {
   $("#infoModal").modal("show");
@@ -32,6 +50,30 @@ const borderBtn = L.easyButton("fa-border-style fa-xl", function (btn, map) {
 
 const currencyBtn = L.easyButton("fa-coins fa-xl", function (btn, map) {
   $("#currencyModal").modal("show");
+});
+
+// Icons
+const capitalIcon = L.ExtraMarkers.icon({
+  prefix: "fa",
+  icon: "fa-landmark",
+  markerColor: "green",
+  shape: "star"
+});
+
+
+const airportIcon = L.ExtraMarkers.icon({
+  prefix: "fa",
+  icon: "fa-plane",
+  iconColor: "black",
+  markerColor: "white",
+  shape: "square"
+});
+
+const cityIcon = L.ExtraMarkers.icon({
+  prefix: "fa",
+  icon: "fa-city",
+  markerColor: "blue",
+  shape: "square"
 });
 
 $(document).ready(function () {
@@ -231,17 +273,17 @@ $(document).ready(function () {
 
     const capitalLatlngs = getLatlngsByName(capName);
     if (!country.capital) {
-      capitalMarker = L.marker(capitalLatlngs);
+      capitalMarker = L.marker(capitalLatlngs, { icon: capitalIcon });
 
       map.addLayer(capitalMarker);
-      capitalMarker.bindPopup(`${country.name}`).openPopup();
+      capitalMarker.bindTooltip(`${country.name}`, { direction: "top", sticky: true })
     } else {
-      capitalMarker = L.marker(capitalLatlngs);
+      capitalMarker = L.marker(capitalLatlngs, { icon: capitalIcon });
 
       map.addLayer(capitalMarker);
       capitalMarker
-        .bindPopup(`${country.capital}<br>Capital of ${country.name}`)
-        .openPopup();
+        .bindTooltip(`${country.capital}<br>Capital of ${country.name}`, { direction: "top", sticky: true })
+        
     }
 
     //info modal
@@ -284,8 +326,8 @@ $(document).ready(function () {
 
     const airportsList = getAirportsByCca2(country.cca2);
     airportsList.forEach((airport) => {
-      const airportMark = L.marker([airport.latitude, airport.longitude]);
-      airportMark.bindPopup(`${airport.name}`);
+      const airportMark = L.marker([airport.latitude, airport.longitude], { icon: airportIcon });
+      airportMark.bindTooltip(`${airport.name}`, { direction: "top", sticky: true });
       airportsMarks.push(airportMark);
     });
     airports.addLayers(airportsMarks);
@@ -294,8 +336,8 @@ $(document).ready(function () {
 
     const citiesList = getCitiesByCca2(country.cca2);
     citiesList.forEach((city) => {
-      const cityMark = L.marker([city.latitude, city.longitude]);
-      cityMark.bindPopup(`${city.name}`);
+      const cityMark = L.marker([city.latitude, city.longitude], { icon: cityIcon });
+      cityMark.bindTooltip(`${city.name}`, { direction: "top", sticky: true });
       citiesMarks.push(cityMark);
     });
     cities.addLayers(citiesMarks);
