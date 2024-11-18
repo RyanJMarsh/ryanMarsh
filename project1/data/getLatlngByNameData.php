@@ -14,13 +14,20 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_URL, $url);
 
 $result = curl_exec($ch);
-
+$cURLERROR = curl_errno($ch);
 curl_close($ch);
 
+if ($cURLERROR) {
+	$output['status']['code'] = $cURLERROR;
+	$output['status']['name'] = "Failure - cURL";
+	$output['status']['description'] = curl_strerror($cURLERROR);
+	$output['status']['seconds'] = number_format((microtime(true) - $executionStartTime), 3);
+	$output['data'] = null;
+} else {
 $decode = json_decode($result, true);
 
 $output = [$decode["results"][0]["geometry"]["lat"], $decode["results"][0]["geometry"]["lng"]];
-
+};
 
 
 header('Content-Type: application/json; charset=UTF-8');

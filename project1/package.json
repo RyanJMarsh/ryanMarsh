@@ -10,11 +10,13 @@
   "license": "ISC",
   "dependencies": {
     "bootstrap": "^5.3.3",
+    "dayjs": "^1.11.13",
     "fontawesome-free": "^1.0.4",
     "jquery": "^3.7.1",
     "leaflet": "^1.9.4",
     "leaflet-easybutton": "^2.4.0",
     "leaflet-extra-markers": "^1.2.2",
-    "leaflet.markercluster": "^1.5.3"
+    "leaflet.markercluster": "^1.5.3",
+    "numeral": "^2.0.6"
   }
 }

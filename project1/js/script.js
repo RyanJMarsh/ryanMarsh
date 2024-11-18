@@ -12,8 +12,8 @@ let airports = new L.MarkerClusterGroup({
     color: "#000",
     weight: 2,
     opacity: 1,
-    fillOpacity: 0.5
-  }
+    fillOpacity: 0.5,
+  },
 });
 let cities = new L.MarkerClusterGroup({
   polygonOptions: {
@@ -21,8 +21,8 @@ let cities = new L.MarkerClusterGroup({
     color: "#000",
     weight: 2,
     opacity: 1,
-    fillOpacity: 0.5
-  }
+    fillOpacity: 0.5,
+  },
 });
 let capitalMarker;
 let polygon;
@@ -57,23 +57,22 @@ const capitalIcon = L.ExtraMarkers.icon({
   prefix: "fa",
   icon: "fa-landmark",
   markerColor: "green",
-  shape: "star"
+  shape: "star",
 });
-
 
 const airportIcon = L.ExtraMarkers.icon({
   prefix: "fa",
   icon: "fa-plane",
   iconColor: "black",
   markerColor: "white",
-  shape: "square"
+  shape: "square",
 });
 
 const cityIcon = L.ExtraMarkers.icon({
   prefix: "fa",
   icon: "fa-city",
   markerColor: "blue",
-  shape: "square"
+  shape: "square",
 });
 
 $(document).ready(function () {
@@ -118,8 +117,13 @@ $(document).ready(function () {
   map.on("locationerror", onLocationError);
   map.on("click", onMapClick);
   $("#dropdown").on("change keyup", selectFromDropdown);
-  $("#currencyExchange").on("change keyup", selectCurrency);
-  $("#currencyButton").on("click", convertCurrency);
+
+  $("#toConvert").on("change", convertCurrency);
+  $("#toConvert").on("keyup", convertCurrency);
+  $("#currencyModal").on("show.bs.modal", convertCurrency);
+  $("#currencyModal").on("hidden.bs.modal", function() {
+    $("#toConvert").val(1);
+  });
 
   map.locate({ setView: true, maxZoom: 16 });
 
@@ -234,21 +238,11 @@ $(document).ready(function () {
     }
   }
 
-  function selectCurrency() {
-    const rate = $("#currencyExchange").val();
-    $("#currencyExchangeRate").html(rate);
-  }
 
   function convertCurrency() {
     const num = $("#toConvert").val();
     const rate = $("#currencyExchange").val();
-    if ($("#toUSD").is(":checked")) {
-      const sum = num / rate;
-      $("#currencyExchangeResult").html(Math.round(sum * 100) / 100);
-    } else {
-      const sum = num * rate;
-      $("#currencyExchangeResult").html(Math.round(sum * 100) / 100);
-    }
+    $("#currencyExchangeResult").val(numeral(num*rate).format("0,0.00"))
   }
 
   function selectCountry() {
@@ -267,6 +261,7 @@ $(document).ready(function () {
     //borders
     const borderLatlngs = getCountryBordersFromCca3(country.cca3);
     polygon = L.polygon(borderLatlngs, { color: "red" }).addTo(map);
+    map.fitBounds(polygon.getBounds());
 
     //capital
     const capName = `${country.capital} ${country.name}`.replace(/ /g, "+");
@@ -276,14 +271,18 @@ $(document).ready(function () {
       capitalMarker = L.marker(capitalLatlngs, { icon: capitalIcon });
 
       map.addLayer(capitalMarker);
-      capitalMarker.bindTooltip(`${country.name}`, { direction: "top", sticky: true })
+      capitalMarker.bindTooltip(`${country.name}`, {
+        direction: "top",
+        sticky: true,
+      });
     } else {
       capitalMarker = L.marker(capitalLatlngs, { icon: capitalIcon });
 
       map.addLayer(capitalMarker);
-      capitalMarker
-        .bindTooltip(`${country.capital}<br>Capital of ${country.name}`, { direction: "top", sticky: true })
-        
+      capitalMarker.bindTooltip(
+        `${country.capital}<br>Capital of ${country.name}`,
+        { direction: "top", sticky: true }
+      );
     }
 
     //info modal
@@ -306,28 +305,40 @@ $(document).ready(function () {
     });
 
     //weather modal
+    const weatherInfo = getWeatherInfo(capName);
 
-    const weatherInfo = getWeatherInfo(
-      `${capitalLatlngs[0]},${capitalLatlngs[1]}`
-    );
+    $("#weatherModalTitle").html(`${country.capital}, ${country.name}`);
 
-    $("#weatherDesc").html(
-      `<img src='${weatherInfo.icon}'> ${weatherInfo.condition}`
+    $("#dayOneCondition").html(`${weatherInfo.dayOne.condition}`);
+    $("#dayOneIcon").attr("src", `${weatherInfo.dayOne.icon}`);
+    $("#dayOneMaxTemp").html(`${weatherInfo.dayOne.maxTemp}`);
+    $("#dayOneMinTemp").html(`${weatherInfo.dayOne.minTemp}`);
+
+    $("#dayTwoDate").html(
+      `${dayjs(weatherInfo.dayTwo.date).format("ddd DD MMM")}`
     );
-    $("#weatherTemp").html(
-      `${Math.round(weatherInfo.temp * 10) / 10}°C but feels like ${
-        Math.round(weatherInfo.feelslike * 10) / 10
-      }°C`
+    $("#dayTwoIcon").attr("src", `${weatherInfo.dayTwo.icon}`);
+    $("#dayTwoMaxTemp").html(`${weatherInfo.dayTwo.maxTemp}`);
+    $("#dayTwoMinTemp").html(`${weatherInfo.dayTwo.minTemp}`);
+
+    $("#dayThreeDate").html(
+      `${dayjs(weatherInfo.dayThree.date).format("ddd DD MMM")}`
     );
-    $("#weatherHumid").html(`${weatherInfo.humidity}%`);
-    $("#weatherSpeed").html(`${weatherInfo.windspeed}m/s`);
+    $("#dayThreeIcon").attr("src", `${weatherInfo.dayThree.icon}`);
+    $("#dayThreeMaxTemp").html(`${weatherInfo.dayThree.maxTemp}`);
+    $("#dayThreeMinTemp").html(`${weatherInfo.dayThree.minTemp}`);
 
     //airport markers
 
     const airportsList = getAirportsByCca2(country.cca2);
     airportsList.forEach((airport) => {
-      const airportMark = L.marker([airport.latitude, airport.longitude], { icon: airportIcon });
-      airportMark.bindTooltip(`${airport.name}`, { direction: "top", sticky: true });
+      const airportMark = L.marker([airport.latitude, airport.longitude], {
+        icon: airportIcon,
+      });
+      airportMark.bindTooltip(`${airport.name}`, {
+        direction: "top",
+        sticky: true,
+      });
       airportsMarks.push(airportMark);
     });
     airports.addLayers(airportsMarks);
@@ -336,7 +347,9 @@ $(document).ready(function () {
 
     const citiesList = getCitiesByCca2(country.cca2);
     citiesList.forEach((city) => {
-      const cityMark = L.marker([city.latitude, city.longitude], { icon: cityIcon });
+      const cityMark = L.marker([city.latitude, city.longitude], {
+        icon: cityIcon,
+      });
       cityMark.bindTooltip(`${city.name}`, { direction: "top", sticky: true });
       citiesMarks.push(cityMark);
     });
@@ -353,11 +366,26 @@ $(document).ready(function () {
         continue;
       } else {
         $("#newsArticles").append(
-          `<tr><td><img src='${news[i].urlToImage}' height='100'></td><td>${news[i].title}</br></br><a href='${news[i].url}'>Link to Article</a></td></tr>`
+          `<table class="table table-borderless">
+              <tr>
+                <td rowspan="2" width="50%">
+                  <img class="img-fluid rounded" src="${news[i].urlToImage}">
+                </td>
+                <td>
+                  <a href="${news[i].url}" class="fw-bold fs-6 text-black" target="_blank">${news[i].title}</a>
+                </td>
+              </tr>
+              <tr>                       
+                <td class="align-bottom pb-0">              
+                <p class="fw-light fs-6 mb-1">${news[i].source.name}</p>              
+                </td>    
+              </tr>
+            </table>
+            <hr>`
         );
       }
     }
-
+    //`<tr><td><img src='${news[i].urlToImage}' height='100'></td><td>${news[i].title}</br></br><a href='${news[i].url}'>Link to Article</a></td></tr>`
     //border neighbours modal
 
     $("#borderCountries").empty();
@@ -401,7 +429,6 @@ $(document).ready(function () {
       $("#currencyExchangeRate").html(rate);
     }
     $("#dropdown").val(JSON.stringify(country));
-    map.fitBounds(polygon.getBounds());
   }
 
   // AJAX Requests
@@ -507,14 +534,14 @@ $(document).ready(function () {
     return countryInfo;
   }
 
-  function getWeatherInfo(latlng) {
+  function getWeatherInfo(capital) {
     let weatherInfo;
     $.ajax({
       dataType: "json",
       async: false,
       url: "./data/getWeatherDataFromCoords.php",
       data: {
-        latlng,
+        capital,
       },
       success: function (data) {
         weatherInfo = data.data;

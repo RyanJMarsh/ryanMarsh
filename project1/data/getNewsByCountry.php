@@ -17,13 +17,17 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 ));
 
 $result = curl_exec($ch);
-
+$cURLERROR = curl_errno($ch);
 curl_close($ch);
-
-$decode = json_decode($result, true);
-
-$output = $decode;
-
+if ($cURLERROR) {
+    $output['status']['code'] = $cURLERROR;
+    $output['status']['name'] = "Failure - cURL";
+    $output['status']['description'] = curl_strerror($cURLERROR);
+    $output['status']['seconds'] = number_format((microtime(true) - $executionStartTime), 3);
+    $output['data'] = null;
+} else {
+    $output = json_decode($result, true);
+};
 
 
 header('Content-Type: application/json; charset=UTF-8;');
