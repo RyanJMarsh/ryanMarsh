@@ -175,7 +175,14 @@ $(document).ready(function () {
   }
 
   function onLocationError(e) {
-    alert(e.message);
+    country = {
+      name: "United Kingdom",
+      cca2: "GB",
+      cca3: "GBR",
+      capital: "London",
+    };
+
+    selectCountry();
   }
 
   function onMapClick(e) {
@@ -216,26 +223,16 @@ $(document).ready(function () {
   }
 
   function selectFromDropdown() {
-    if ($("#dropdown").val() == "Select a Country...") {
-      if (capitalMarker) {
-        map.removeLayer(capitalMarker);
-      }
-      if (polygon) {
-        map.removeLayer(polygon);
-      }
-      map.locate({ setView: true, maxZoom: 16 });
-    } else {
-      const info = JSON.parse($("#dropdown").val());
+    const info = JSON.parse($("#dropdown").val());
 
-      country = {
-        name: info.name,
-        cca2: info.cca2,
-        cca3: info.cca3,
-        capital: info.capital,
-      };
+    country = {
+      name: info.name,
+      cca2: info.cca2,
+      cca3: info.cca3,
+      capital: info.capital,
+    };
 
-      selectCountry();
-    }
+    selectCountry();
   }
 
   function convertCurrency() {
@@ -488,7 +485,7 @@ $(document).ready(function () {
             });
           });
         } else {
-          alert(data.status.name)
+          alert(data.status.name);
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
@@ -511,8 +508,8 @@ $(document).ready(function () {
         if (data.status.name == "ok") {
           latlngs = data.data;
         } else {
-          alert(data.status.name)
-        }        
+          alert(data.status.name);
+        }
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
@@ -535,8 +532,8 @@ $(document).ready(function () {
         if (data.status.name == "ok") {
           countryInfo = data.data;
         } else {
-          alert(data.status.name)
-        }        
+          alert(data.status.name);
+        }
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
@@ -558,8 +555,8 @@ $(document).ready(function () {
         if (data.status.name == "ok") {
           weatherInfo = data.data;
         } else {
-          alert(data.status.name)
-        }        
+          alert(data.status.name);
+        }
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
@@ -581,7 +578,7 @@ $(document).ready(function () {
         if (data.status.name == "ok") {
           airports = data.data;
         } else {
-          alert(data.status.name)
+          alert(data.status.name);
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
@@ -604,7 +601,7 @@ $(document).ready(function () {
         if (data.status.name == "ok") {
           cities = data.data;
         } else {
-          alert(data.status.name)
+          alert(data.status.name);
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
@@ -624,7 +621,7 @@ $(document).ready(function () {
         if (data.status.name == "ok") {
           list = data.data;
         } else {
-          alert(data.status.name)
+          alert(data.status.name);
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
@@ -647,7 +644,7 @@ $(document).ready(function () {
         if (data.status.name == "ok") {
           rates = data.data.rates;
         } else {
-          alert(data.status.name)
+          alert(data.status.name);
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
@@ -670,7 +667,7 @@ $(document).ready(function () {
         if (data.status.name == "ok") {
           news = data.data;
         } else {
-          alert(data.status.name)
+          alert(data.status.name);
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
@@ -694,7 +691,7 @@ $(document).ready(function () {
         if (data.status.name == "ok") {
           info = data.data;
         } else {
-          alert(data.status.name)
+          alert(data.status.name);
         }
       },
       error: function (jqXHR, textStatus, errorThrown) {
