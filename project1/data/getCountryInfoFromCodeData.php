@@ -23,9 +23,14 @@ if ($cURLERROR) {
 	$output['status']['description'] = curl_strerror($cURLERROR);
 	$output['status']['seconds'] = number_format((microtime(true) - $executionStartTime), 3);
 	$output['data'] = null;
+} elseif (json_last_error() !== JSON_ERROR_NONE) {
+	$output['status']['code'] = json_last_error();
+	$output['status']['name'] = "Failure - JSON";
+	$output['status']['description'] = json_last_error_msg();
+	$output['status']['seconds'] = number_format((microtime(true) - $executionStartTime), 3);
+	$output['data'] = null;
 } else {
 	$decode = json_decode($result, true);
-
 
 	$output['status']['code'] = "200";
 	$output['status']['name'] = "ok";

@@ -3,7 +3,7 @@
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 
-
+$executionStartTime = microtime(true);
 
 
 $url = 'https://countriesnow.space/api/v0.1/countries/capital';
@@ -23,13 +23,26 @@ if ($cURLERROR) {
 	$output['status']['description'] = curl_strerror($cURLERROR);
 	$output['status']['seconds'] = number_format((microtime(true) - $executionStartTime), 3);
 	$output['data'] = null;
+} elseif (json_last_error() !== JSON_ERROR_NONE) {
+	$output['status']['code'] = json_last_error();
+	$output['status']['name'] = "Failure - JSON";
+	$output['status']['description'] = json_last_error_msg();
+	$output['status']['seconds'] = number_format((microtime(true) - $executionStartTime), 3);
+	$output['data'] = null;
 } else {
-
 	$decode = json_decode($result, true);
+
+	$output['status']['code'] = "200";
+	$output['status']['name'] = "ok";
+	$output['status']['description'] = "success";
+	$output['status']['returnedIn'] = intval((microtime(true) - $executionStartTime) * 1000) . " ms";
+
+	$output['data'] = $decode;
+	
 };
 
 
 
 header('Content-Type: application/json; charset=UTF-8');
 
-echo json_encode($decode);
+echo json_encode($output);

@@ -121,7 +121,7 @@ $(document).ready(function () {
   $("#toConvert").on("change", convertCurrency);
   $("#toConvert").on("keyup", convertCurrency);
   $("#currencyModal").on("show.bs.modal", convertCurrency);
-  $("#currencyModal").on("hidden.bs.modal", function() {
+  $("#currencyModal").on("hidden.bs.modal", function () {
     $("#toConvert").val(1);
   });
 
@@ -238,11 +238,10 @@ $(document).ready(function () {
     }
   }
 
-
   function convertCurrency() {
     const num = $("#toConvert").val();
     const rate = $("#currencyExchange").val();
-    $("#currencyExchangeResult").val(numeral(num*rate).format("0,0.00"))
+    $("#currencyExchangeResult").val(numeral(num * rate).format("0,0.00"));
   }
 
   function selectCountry() {
@@ -479,14 +478,18 @@ $(document).ready(function () {
       dataType: "json",
       async: false,
       url: "./data/getCapitalsData.php",
-      success: function ({ data }) {
-        countryList.forEach((country) => {
-          data.forEach((countryData) => {
-            if (country.cca3 == countryData.iso3) {
-              country.capital = countryData.capital;
-            }
+      success: function (data) {
+        if (data.status.name == "ok") {
+          countryList.forEach((country) => {
+            data.data.data.forEach((countryData) => {
+              if (country.cca3 == countryData.iso3) {
+                country.capital = countryData.capital;
+              }
+            });
           });
-        });
+        } else {
+          alert(data.status.name)
+        }
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
@@ -505,7 +508,11 @@ $(document).ready(function () {
         name,
       },
       success: function (data) {
-        latlngs = data;
+        if (data.status.name == "ok") {
+          latlngs = data.data;
+        } else {
+          alert(data.status.name)
+        }        
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
@@ -525,7 +532,11 @@ $(document).ready(function () {
         cca3,
       },
       success: function (data) {
-        countryInfo = data.data;
+        if (data.status.name == "ok") {
+          countryInfo = data.data;
+        } else {
+          alert(data.status.name)
+        }        
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
@@ -544,7 +555,11 @@ $(document).ready(function () {
         capital,
       },
       success: function (data) {
-        weatherInfo = data.data;
+        if (data.status.name == "ok") {
+          weatherInfo = data.data;
+        } else {
+          alert(data.status.name)
+        }        
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
@@ -563,7 +578,11 @@ $(document).ready(function () {
         cca2,
       },
       success: function (data) {
-        airports = data.data;
+        if (data.status.name == "ok") {
+          airports = data.data;
+        } else {
+          alert(data.status.name)
+        }
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
@@ -582,7 +601,11 @@ $(document).ready(function () {
         cca2,
       },
       success: function (data) {
-        cities = data.data;
+        if (data.status.name == "ok") {
+          cities = data.data;
+        } else {
+          alert(data.status.name)
+        }
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
@@ -598,7 +621,11 @@ $(document).ready(function () {
       async: false,
       url: "./data/getListOfCurrencies.php",
       success: function (data) {
-        list = data;
+        if (data.status.name == "ok") {
+          list = data.data;
+        } else {
+          alert(data.status.name)
+        }
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
@@ -617,7 +644,11 @@ $(document).ready(function () {
         currencies,
       },
       success: function (data) {
-        rates = data.rates;
+        if (data.status.name == "ok") {
+          rates = data.data.rates;
+        } else {
+          alert(data.status.name)
+        }
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
@@ -636,7 +667,11 @@ $(document).ready(function () {
         name,
       },
       success: function (data) {
-        news = data;
+        if (data.status.name == "ok") {
+          news = data.data;
+        } else {
+          alert(data.status.name)
+        }
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
@@ -656,7 +691,11 @@ $(document).ready(function () {
         lng,
       },
       success: function (data) {
-        info = data;
+        if (data.status.name == "ok") {
+          info = data.data;
+        } else {
+          alert(data.status.name)
+        }
       },
       error: function (jqXHR, textStatus, errorThrown) {
         console.log(textStatus, errorThrown);
