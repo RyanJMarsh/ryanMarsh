@@ -381,7 +381,7 @@ $(document).ready(function () {
         );
       }
     }
-    //`<tr><td><img src='${news[i].urlToImage}' height='100'></td><td>${news[i].title}</br></br><a href='${news[i].url}'>Link to Article</a></td></tr>`
+  
     //border neighbours modal
 
     $("#borderCountries").empty();
