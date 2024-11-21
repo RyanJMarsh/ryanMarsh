@@ -1,10 +1,10 @@
 <?php
 
 	// example use from browser
-	// http://localhost/companydirectory/libs/php/searchAll.php?txt=<txt>
+	// http://localhost/companydirectory/libs/php/getDepartmentByID.php?id=<id>
 
-	// remove next two lines for production
-	
+	// remove next two lines for production	
+
 	ini_set('display_errors', 'On');
 	error_reporting(E_ALL);
 
@@ -23,23 +23,21 @@
 		$output['status']['description'] = "database unavailable";
 		$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
 		$output['data'] = [];
-
+		
 		mysqli_close($conn);
 
 		echo json_encode($output);
-
+		
 		exit;
 
 	}	
 
-	// first query - SQL statement accepts parameters and so is prepared to avoid SQL injection.
+	// SQL statement accepts parameters and so is prepared to avoid SQL injection.
 	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
 
-	$query = $conn->prepare('SELECT `p`.`id`, `p`.`firstName`, `p`.`lastName`, `p`.`email`, `p`.`jobTitle`, `d`.`id` as `departmentID`, `d`.`name` AS `department`, `l`.`id` as `locationID`, `l`.`name` AS `location` FROM `personnel` `p` LEFT JOIN `department` `d` ON (`d`.`id` = `p`.`departmentID`) LEFT JOIN `location` `l` ON (`l`.`id` = `d`.`locationID`) WHERE `p`.`firstName` LIKE ? OR `p`.`lastName` LIKE ? OR `p`.`email` LIKE ? OR `p`.`jobTitle` LIKE ? OR `d`.`name` LIKE ? OR `l`.`name` LIKE ? ORDER BY `p`.`id`, `p`.`lastName`, `p`.`firstName`, `d`.`name`, `l`.`name`');
+	$query = $conn->prepare('SELECT id, name FROM location WHERE id =  ?');
 
-  $likeText = "%" . $_REQUEST['txt'] . "%";
-
-  $query->bind_param("ssssss", $likeText, $likeText, $likeText, $likeText, $likeText, $likeText);
+	$query->bind_param("i", $_REQUEST['id']);
 
 	$query->execute();
 	
@@ -50,32 +48,32 @@
 		$output['status']['description'] = "query failed";	
 		$output['data'] = [];
 
-		mysqli_close($conn);
-
 		echo json_encode($output); 
-
+	
+		mysqli_close($conn);
 		exit;
 
 	}
-    
+
 	$result = $query->get_result();
 
-  $found = [];
+   	$data = [];
 
 	while ($row = mysqli_fetch_assoc($result)) {
 
-		array_push($found, $row);
+		array_push($data, $row);
 
 	}
 
+	
 	$output['status']['code'] = "200";
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data']['found'] = $found;
-	
-	mysqli_close($conn);
+	$output['data'] = $data;
 
 	echo json_encode($output); 
+
+	mysqli_close($conn);
 
 ?>

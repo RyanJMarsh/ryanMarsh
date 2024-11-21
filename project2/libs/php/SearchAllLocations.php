@@ -35,11 +35,11 @@
 	// first query - SQL statement accepts parameters and so is prepared to avoid SQL injection.
 	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
 
-	$query = $conn->prepare('SELECT `p`.`id`, `p`.`firstName`, `p`.`lastName`, `p`.`email`, `p`.`jobTitle`, `d`.`id` as `departmentID`, `d`.`name` AS `department`, `l`.`id` as `locationID`, `l`.`name` AS `location` FROM `personnel` `p` LEFT JOIN `department` `d` ON (`d`.`id` = `p`.`departmentID`) LEFT JOIN `location` `l` ON (`l`.`id` = `d`.`locationID`) WHERE `p`.`firstName` LIKE ? OR `p`.`lastName` LIKE ? OR `p`.`email` LIKE ? OR `p`.`jobTitle` LIKE ? OR `d`.`name` LIKE ? OR `l`.`name` LIKE ? ORDER BY `p`.`id`, `p`.`lastName`, `p`.`firstName`, `d`.`name`, `l`.`name`');
+	$query = $conn->prepare('SELECT * FROM location `l` WHERE `l`.`name` LIKE ? ORDER BY `l`.`id`, `l`.`name`');
 
   $likeText = "%" . $_REQUEST['txt'] . "%";
 
-  $query->bind_param("ssssss", $likeText, $likeText, $likeText, $likeText, $likeText, $likeText);
+  $query->bind_param("s", $likeText);
 
 	$query->execute();
 	

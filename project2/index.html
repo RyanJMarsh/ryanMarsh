@@ -264,7 +264,7 @@
 
           <div class="modal-body">
             <form id="editDepartmentForm">
-              <input type="hidden" id="editDepartmentEmployeeID" />
+              <input type="hidden" id="editDepartmentID" />
 
               <div class="form-floating mb-3">
                 <input
@@ -307,6 +307,211 @@
         </div>
       </div>
     </div>
+
+    <div
+      id="editLocationModal"
+      class="modal fade"
+      tabindex="-1"
+      data-bs-backdrop="false"
+      data-bs-keyboard="false"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable"
+      >
+        <div class="modal-content shadow">
+          <div class="modal-header bg-primary bg-gradient text-white">
+            <h5 class="modal-title">Edit location</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div class="modal-body">
+            <form id="editLocationForm">
+              <input type="hidden" id="editLocationID" />
+
+              <div class="form-floating mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editLocationName"
+                  placeholder="Name"
+                  required
+                />
+                <label for="editLocationName">Name</label>
+              </div>
+
+
+          <div class="modal-footer">
+            <button
+              type="submit"
+              form="editLocationForm"
+              class="btn btn-outline-primary btn-sm myBtn"
+            >
+              SAVE
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm myBtn"
+              data-bs-dismiss="modal"
+            >
+              CANCEL
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div
+      id="deletePersonnelModal"
+      class="modal fade"
+      tabindex="-1"
+      data-bs-backdrop="false"
+      data-bs-keyboard="false"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable"
+      >
+        <div class="modal-content shadow">
+          <div class="modal-header bg-primary bg-gradient text-white">
+            <h5 class="modal-title">Delete employee</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div class="modal-body text-center">
+            Are you sure you want to remove <span class="fw-bold" id="deletePersonnelName"></span> from the directory.
+            </div>
+
+
+          <div class="modal-footer">
+            <button
+              type="submit"
+              id="deletePersonnelBtn"
+              class="btn btn-outline-danger btn-sm myBtn"
+            >
+              DELETE
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm myBtn"
+              data-bs-dismiss="modal"
+            >
+              CANCEL
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="deleteDepartmentModal"
+      class="modal fade"
+      tabindex="-1"
+      data-bs-backdrop="false"
+      data-bs-keyboard="false"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div
+        class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable"
+      >
+        <div class="modal-content shadow">
+          <div class="modal-header bg-primary bg-gradient text-white">
+            <h5 class="modal-title">Delete department</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div class="modal-body text-center">
+            Are you sure you want to remove <span class="fw-bold" id="deleteDepartmentName"></span> from the directory.
+            </div>
+
+
+          <div class="modal-footer">
+            <button
+              type="submit"
+              id="deleteDepartmentBtn"
+              class="btn btn-outline-danger btn-sm myBtn"
+            >
+              DELETE
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary btn-sm myBtn"
+              data-bs-dismiss="modal"
+            >
+              CANCEL
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+    id="deleteLocationModal"
+    class="modal fade"
+    tabindex="-1"
+    data-bs-backdrop="false"
+    data-bs-keyboard="false"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+  >
+    <div
+      class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable"
+    >
+      <div class="modal-content shadow">
+        <div class="modal-header bg-primary bg-gradient text-white">
+          <h5 class="modal-title">Delete location</h5>
+          <button
+            type="button"
+            class="btn-close btn-close-white"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+
+        <div class="modal-body text-center">
+          Are you sure you want to remove <span class="fw-bold" id="deleteLocationName"></span> from the directory.
+          </div>
+
+
+        <div class="modal-footer">
+          <button
+            type="submit"
+            id="deleteLocationBtn"
+            class="btn btn-outline-danger btn-sm myBtn"
+          >
+            DELETE
+          </button>
+          <button
+            type="button"
+            class="btn btn-outline-primary btn-sm myBtn"
+            data-bs-dismiss="modal"
+          >
+            CANCEL
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+    
 
     <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="./node_modules/jquery/dist/jquery.min.js"></script>
