@@ -10,7 +10,7 @@ $(window).on("load", function () {
 
 $("document").ready(function () {
   fillPersonnelList();
-
+  
   $("#searchInp").on("keyup", function () {
     // your code
   });
@@ -25,6 +25,7 @@ $("document").ready(function () {
         fillDepartmentsList();
       } else {
         // Refresh location table
+        fillLocationList();
       }
     }
   });
@@ -49,6 +50,7 @@ $("document").ready(function () {
 
   $("#locationsBtn").on("click", function () {
     // Call function to refresh location table
+    fillLocationList();
   });
 
   $("#editPersonnelModal").on("show.bs.modal", function (e) {
@@ -104,55 +106,9 @@ $("document").ready(function () {
     });
   });
 
-  // Executes when the form button with type="submit" is clicked
-
-  $("#editPersonnelForm").on("submit", function (e) {
-    // Executes when the form button with type="submit" is clicked
-    // stop the default browser behviour
-
-    e.preventDefault();
-
-    // AJAX call to save form data
-  });
-  $("#searchInp").on("keyup", function () {
-    // your code
-  });
-
-  $("#refreshBtn").on("click", function () {
-    if ($("#personnelBtn").hasClass("active")) {
-      // Refresh personnel table
-    } else {
-      if ($("#departmentsBtn").hasClass("active")) {
-        // Refresh department table
-      } else {
-        // Refresh location table
-      }
-    }
-  });
-
-  $("#filterBtn").on("click", function () {
-    // Open a modal of your own design that allows the user to apply a filter to the personnel table on either department or location
-  });
-
-  $("#addBtn").on("click", function () {
-    // Replicate the logic of the refresh button click to open the add modal for the table that is currently on display
-  });
-
-  $("#personnelBtn").on("click", function () {
-    // Call function to refresh personnel table
-  });
-
-  $("#departmentsBtn").on("click", function () {
-    // Call function to refresh department table
-  });
-
-  $("#locationsBtn").on("click", function () {
-    // Call function to refresh location table
-  });
-
-  $("#editPersonnelModal").on("show.bs.modal", function (e) {
+  $("#editDepartmentModal").on("show.bs.modal", function (e) {
     $.ajax({
-      url: "./libs/php/getPersonnelByID.php",
+      url: "./libs/php/getDepartmentByID.php",
       type: "POST",
       dataType: "json",
       data: {
@@ -162,23 +118,19 @@ $("document").ready(function () {
         id: $(e.relatedTarget).attr("data-id"),
       },
       success: function (result) {
-        var resultCode = result.status.code;
-
-        if (resultCode == 200) {
+        console.log(result)
+        if (result.status.code == 200) {
           // Update the hidden input with the employee id so that
           // it can be referenced when the form is submitted
+          
+          $("#editDepartmentEmployeeID").val(result.data.department[0].id);
 
-          $("#editPersonnelEmployeeID").val(result.data.personnel[0].id);
+          $("#editDepartmentName").val(result.data.department[0].name);
+          
+          $("#editDepartmentLocation").html("");
 
-          $("#editPersonnelFirstName").val(result.data.personnel[0].firstName);
-          $("#editPersonnelLastName").val(result.data.personnel[0].lastName);
-          $("#editPersonnelJobTitle").val(result.data.personnel[0].jobTitle);
-          $("#editPersonnelEmailAddress").val(result.data.personnel[0].email);
-
-          $("#editPersonnelDepartment").html("");
-
-          $.each(result.data.department, function () {
-            $("#editPersonnelDepartment").append(
+          $.each(result.data.location, function () {
+            $("#editDepartmentLocation").append(
               $("<option>", {
                 value: this.id,
                 text: this.name,
@@ -186,17 +138,18 @@ $("document").ready(function () {
             );
           });
 
-          $("#editPersonnelDepartment").val(
-            result.data.personnel[0].departmentID
+          $("#editDepartmentLocation").val(
+            result.data.department[0].locationID
           );
         } else {
-          $("#editPersonnelModal .modal-title").replaceWith(
+          $("#editDepartmentModal .modal-title").replaceWith(
             "Error retrieving data"
           );
-        }
+          
+        }        
       },
       error: function (jqXHR, textStatus, errorThrown) {
-        $("#editPersonnelModal .modal-title").replaceWith(
+        $("#editDepartmentModal .modal-title").replaceWith(
           "Error retrieving data"
         );
       },
@@ -277,7 +230,7 @@ function fillDepartmentsList() {
                     <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editDepartmentModal" data-id="${departmentsList[i].id}">
                       <i class="fa-solid fa-pencil fa-fw"></i>
                     </button>
-                    <button type="button" class="btn btn-primary btn-sm deleteDepartmentBtn" data-id="${departmentsList[i].id}">
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteDepartmentBtn" data-id="${departmentsList[i].id}">
                       <i class="fa-solid fa-trash fa-fw"></i>
                     </button>
                   </td>
@@ -285,6 +238,38 @@ function fillDepartmentsList() {
           `);
         }
           
+      }
+    },
+  });
+}
+
+function fillLocationList() {
+  $("#locationTableBody").empty();
+  $.ajax({
+    url: "./libs/php/getAllLocations.php",
+    type: "GET",
+    success: function (result) {
+      if (result.status.code == "200") {
+        const locationsList = result.data;
+        
+        for (let i = 0; i < locationsList.length; i++) {
+          $("#locationTableBody").append(`
+            <tr>
+                  <td class="align-middle text-nowrap">
+                    ${locationsList[i].name}
+                  </td>
+                  <td class="align-middle text-end text-nowrap">
+                    <button type="button" class="btn btn-primary btn-sm"data-bs-toggle="modal" data-bs-target="#editLocationModal" data-id="${locationsList[i].id}">
+                      <i class="fa-solid fa-pencil fa-fw"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm"data-bs-toggle="modal" data-bs-target="#editLocationModal" data-id="${locationsList[i].id}">
+                      <i class="fa-solid fa-trash fa-fw"></i>
+                    </button>
+                  </td>
+                </tr>
+          `);
+        }
+        
       }
     },
   });
