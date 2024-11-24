@@ -78,10 +78,11 @@ $("document").ready(function () {
   $("#filterBtn").on("click", function () {
     // Open a modal of your own design that allows the user to apply a filter to the personnel table on either department or location
     if($("#filterDepartment").val() == "No Filter" && $("#filterLocation").val() == "No Filter") {
-      fillPersonnelList(getArrayOfAllPersonnel());
+      $("#personnelBtn").trigger('click');
+      fillPersonnelList(getArrayOfAllPersonnel());      
     } else {
-
-      fillPersonnelList(getFilteredArrayOfPersonnel())
+      $("#personnelBtn").trigger('click');
+      fillPersonnelList(getFilteredArrayOfPersonnel());
     }
   });
 
@@ -379,6 +380,8 @@ function getArrayOfAllLocations() {
 
 function fillPersonnelList(personnelList) {
   $("#personnelTableBody").empty();
+  $("#departmentTableBody").empty();
+  $("#locationTableBody").empty();
   for (let i = 0; i < personnelList.length; i++) {
     $("#personnelTableBody").append(`
       <tr>
@@ -408,7 +411,9 @@ function fillPersonnelList(personnelList) {
 }
 
 function fillDepartmentsList(departmentsList) {
+  $("#personnelTableBody").empty();
   $("#departmentTableBody").empty();
+  $("#locationTableBody").empty();
   for (let i = 0; i < departmentsList.length; i++) {
     $("#departmentTableBody").append(`
       <tr>
@@ -432,6 +437,8 @@ function fillDepartmentsList(departmentsList) {
 }
 
 function fillLocationsList(locationsList) {
+  $("#personnelTableBody").empty();
+  $("#departmentTableBody").empty();
   $("#locationTableBody").empty();
   for (let i = 0; i < locationsList.length; i++) {
     $("#locationTableBody").append(`
