@@ -10,6 +10,7 @@ $(window).on("load", function () {
 
 $("document").ready(function () {
   fillPersonnelList(getArrayOfAllPersonnel());
+  fillFilterOptions()
 
   $("#searchInp").on("keyup", function () {
     // your code
@@ -55,6 +56,8 @@ $("document").ready(function () {
   });
 
   $("#refreshBtn").on("click", function () {
+    $("#filterDepartment").val("No Filter");
+    $("#filterLocation").val("No Filter");
     if ($("#personnelBtn").hasClass("active")) {
       // Refresh personnel table
       $("#searchInp").val('');
@@ -74,6 +77,12 @@ $("document").ready(function () {
 
   $("#filterBtn").on("click", function () {
     // Open a modal of your own design that allows the user to apply a filter to the personnel table on either department or location
+    if($("#filterDepartment").val() == "No Filter" && $("#filterLocation").val() == "No Filter") {
+      fillPersonnelList(getArrayOfAllPersonnel());
+    } else {
+
+      fillPersonnelList(getFilteredArrayOfPersonnel())
+    }
   });
 
   $("#addBtn").on("click", function () {
@@ -316,6 +325,28 @@ function getArrayOfAllPersonnel() {
   return personnelList;
 }
 
+function getFilteredArrayOfPersonnel() {
+  let personnelList;
+  const filterDepartment = $("#filterDepartment").val()
+  const filterLocation = $("#filterLocation").val()
+  $.ajax({
+    url: "./libs/php/getFilteredPersonnel.php",
+    type: "GET",
+    async: false,
+    data: {
+      filterDepartment,
+      filterLocation     
+    },
+    success: function (result) {
+      if (result.status.code == "200") {
+        personnelList = result.data;
+      }
+    },
+  });
+  return personnelList;
+}
+
+
 function getArrayOfAllDepartments() {
   let departmentsList;
   $.ajax({
@@ -419,4 +450,21 @@ function fillLocationsList(locationsList) {
       </tr>
         `);
   }
+}
+
+function fillFilterOptions() {
+  const departments = getArrayOfAllDepartments()
+  const locations = getArrayOfAllLocations()
+  for(let i=0; i<departments.length;i++) {
+    $("#filterDepartment").append(
+      `<option value=${departments[i].id}>${departments[i].name}</option>
+      `)
+  }
+
+  for(let i=0; i<locations.length;i++) {
+    $("#filterLocation").append(
+      `<option value=${locations[i].id}>${locations[i].name}</option>
+      `)
+  }
+  
 }
