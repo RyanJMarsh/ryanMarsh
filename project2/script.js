@@ -10,7 +10,7 @@ $(window).on("load", function () {
 
 $("document").ready(function () {
   fillPersonnelList(getArrayOfAllPersonnel());
-  fillFilterOptions()
+  fillDropdowns()
 
   $("#searchInp").on("keyup", function () {
     // your code
@@ -459,7 +459,7 @@ function fillLocationsList(locationsList) {
   }
 }
 
-function fillFilterOptions() {
+function fillDropdowns() {
   const departments = getArrayOfAllDepartments()
   const locations = getArrayOfAllLocations()
   for(let i=0; i<departments.length;i++) {
@@ -470,6 +470,18 @@ function fillFilterOptions() {
 
   for(let i=0; i<locations.length;i++) {
     $("#filterLocation").append(
+      `<option value=${locations[i].id}>${locations[i].name}</option>
+      `)
+  }
+
+  for(let i=0; i<departments.length;i++) {
+    $("#addPersonnelDepartment").append(
+      `<option value=${departments[i].id}>${departments[i].name}</option>
+      `)
+  }
+
+  for(let i=0; i<locations.length;i++) {
+    $("#addDepartmentLocation").append(
       `<option value=${locations[i].id}>${locations[i].name}</option>
       `)
   }
