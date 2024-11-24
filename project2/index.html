@@ -235,7 +235,7 @@
             <button
               type="submit"
               form="editPersonnelForm"
-              class="btn btn-outline-primary btn-sm myBtn"
+              class="btn btn-outline-success btn-sm myBtn"
             >
               SAVE
             </button>
@@ -304,7 +304,7 @@
             <button
               type="submit"
               form="editDepartmentForm"
-              class="btn btn-outline-primary btn-sm myBtn"
+              class="btn btn-outline-success btn-sm myBtn"
             >
               SAVE
             </button>
@@ -362,8 +362,9 @@
             <div class="modal-footer">
               <button
                 type="submit"
-                form="editLocationForm"
-                class="btn btn-outline-primary btn-sm myBtn"
+                id="editLocationBtn"
+                class="btn btn-outline-success btn-sm myBtn"
+                data-bs-dismiss="modal"
               >
                 SAVE
               </button>
@@ -404,6 +405,7 @@
           </div>
 
           <div class="modal-body text-center">
+            <input type="hidden" id="deletePersonnelID" />
             Are you sure you want to remove
             <span class="fw-bold" id="deletePersonnelName"></span> from the
             directory.
@@ -414,6 +416,7 @@
               type="submit"
               id="deletePersonnelBtn"
               class="btn btn-outline-danger btn-sm myBtn"
+              data-bs-dismiss="modal"
             >
               DELETE
             </button>
@@ -453,6 +456,7 @@
           </div>
 
           <div class="modal-body text-center">
+            <input type="hidden" id="deleteDepartmentID" />
             Are you sure you want to remove
             <span class="fw-bold" id="deleteDepartmentName"></span> from the
             directory.
@@ -463,6 +467,7 @@
               type="submit"
               id="deleteDepartmentBtn"
               class="btn btn-outline-danger btn-sm myBtn"
+              data-bs-dismiss="modal"
             >
               DELETE
             </button>
@@ -502,6 +507,7 @@
           </div>
 
           <div class="modal-body text-center">
+            <input type="hidden" id="deleteLocationID" />
             Are you sure you want to remove
             <span class="fw-bold" id="deleteLocationName"></span> from the
             directory.
@@ -512,6 +518,7 @@
               type="submit"
               id="deleteLocationBtn"
               class="btn btn-outline-danger btn-sm myBtn"
+              data-bs-dismiss="modal"
             >
               DELETE
             </button>
@@ -781,7 +788,7 @@
               <button
                 type="submit"
                 id="addBtn"
-                class="btn btn-outline-primary btn-sm myBtn"
+                class="btn btn-outline-success btn-sm myBtn"
                 data-bs-dismiss="modal"
               >
                 ADD

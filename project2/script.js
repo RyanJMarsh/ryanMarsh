@@ -104,6 +104,7 @@ $("document").ready(function () {
       $("#addLocationName").val('');
       $("#addPersonnelBtn").trigger('click');
     }
+    $("#refreshBtn").trigger('click')
   });
 
   $("#personnelBtn").on("click", function () {
@@ -171,6 +172,8 @@ $("document").ready(function () {
     });
   });
 
+  $("#editPersonnelBtn").on("click", function(e) {})
+
   $("#editDepartmentModal").on("show.bs.modal", function (e) {
     $.ajax({
       url: "./libs/php/getDepartmentByID.php",
@@ -180,7 +183,6 @@ $("document").ready(function () {
         id: $(e.relatedTarget).attr("data-id"),
       },
       success: function (result) {
-        console.log(result);
         if (result.status.code == 200) {
           $("#editDepartmentID").val(result.data.department[0].id);
 
@@ -214,6 +216,8 @@ $("document").ready(function () {
     });
   });
 
+  $("#editDepartmentBtn").on("click", function(e) {})
+
   $("#editLocationModal").on("show.bs.modal", function (e) {
     $.ajax({
       url: "./libs/php/getLocationByID.php",
@@ -240,6 +244,23 @@ $("document").ready(function () {
     });
   });
 
+  $("#editLocationBtn").on("click", function(e) {
+    const name = $("#editLocationName").val();
+    const id = $("#editLocationID").val();
+    $.ajax({
+      url: "./libs/php/editLocationByID.php",
+      type: 'POST',
+      data: {
+        name,
+        id
+      },
+      success: function(result) {
+        alert(`${name} has been updated`)
+        $("#refreshBtn").trigger('click')
+      }
+    })
+  })
+
   $("#deletePersonnelModal").on("show.bs.modal", function (e) {
     $.ajax({
       url: "./libs/php/getPersonnelByID.php",
@@ -250,6 +271,7 @@ $("document").ready(function () {
       },
       success: function (result) {
         if (result.status.code == 200) {
+          $("#deletePersonnelID").val($(e.relatedTarget).attr("data-id"))
           $("#deletePersonnelName").html(
             `${result.data.personnel[0].firstName} ${result.data.personnel[0].lastName}`
           );
@@ -267,6 +289,23 @@ $("document").ready(function () {
     });
   });
 
+  $("#deletePersonnelBtn").on("click", function(e) {
+    const name = $("#deletePersonnelName").html();
+    const id = $("#deletePersonnelID").val()
+    $.ajax({
+      url: "./libs/php/deletePersonnelByID.php",
+      type: "POST",
+      data: {
+        id,
+        name
+      },
+      success: function(result) {
+        alert(`${name} has been removed from Personnel`)
+        $("#refreshBtn").trigger('click')
+      }
+    })
+  })
+
   $("#deleteDepartmentModal").on("show.bs.modal", function (e) {
     $.ajax({
       url: "./libs/php/getDepartmentByID.php",
@@ -277,6 +316,7 @@ $("document").ready(function () {
       },
       success: function (result) {
         if (result.status.code == 200) {
+          $("#deleteDepartmentID").val($(e.relatedTarget).attr("data-id"))
           $("#deleteDepartmentName").html(`${result.data.department[0].name}`);
         } else {
           $("#deleteDepartmentModal .modal-title").replaceWith(
@@ -292,6 +332,24 @@ $("document").ready(function () {
     });
   });
 
+  $("#deleteDepartmentBtn").on("click", function(e) {
+    const name = $("#deleteDepartmentName").html();
+    const id = $("#deleteDepartmentID").val()
+    $.ajax({
+      url: "./libs/php/deleteDepartmentByID.php",
+      type: "POST",
+      data: {
+        id,
+        name
+      },
+      success: function(result) {
+        alert(`${name} has been removed from Departments`)
+        $("#refreshBtn").trigger('click')
+      }
+    })
+    
+  })
+
   $("#deleteLocationModal").on("show.bs.modal", function (e) {
     $.ajax({
       url: "./libs/php/getLocationByID.php",
@@ -302,6 +360,7 @@ $("document").ready(function () {
       },
       success: function (result) {
         if (result.status.code == 200) {
+          $("#deleteLocationID").val($(e.relatedTarget).attr("data-id"))
           $("#deleteLocationName").html(`${result.data[0].name}`);
         } else {
           $("#deleteLocationModal .modal-title").replaceWith(
@@ -317,14 +376,24 @@ $("document").ready(function () {
     });
   });
 
-  $("#editPersonnelForm").on("submit", function (e) {
-    // Executes when the form button with type="submit" is clicked
-    // stop the default browser behviour
+  $("#deleteLocationBtn").on("click", function(e) {
+    const name = $("#deleteLocationName").html();
+    const id = $("#deleteLocationID").val()
+    $.ajax({
+      url: "./libs/php/deleteLocationByID.php",
+      type: "POST",
+      data: {
+        id,
+        name
+      },
+      success: function(result) {
+        alert(`${name} has been removed from Locations`)
+        $("#refreshBtn").trigger('click')
+      }
+    })
+  })
 
-    e.preventDefault();
-
-    // AJAX call to save form data
-  });
+  
 });
 
 function getArrayOfAllPersonnel() {
