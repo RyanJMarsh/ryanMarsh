@@ -37,9 +37,9 @@
 	// SQL statement accepts parameters and so is prepared to avoid SQL injection.
 	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
 
-	$query = $conn->prepare('INSERT INTO department (name, locationID) VALUES(?,?)');
+	$query = $conn->prepare('INSERT INTO personnel (firstName, lastName, jobTitle, email, departmentID) VALUES(?,?,?,?,?)');
 
-	$query->bind_param("si", $_REQUEST['name'], $_REQUEST['locationID']);
+	$query->bind_param("ssssi", $_REQUEST['firstName'], $_REQUEST['lastName'], $_REQUEST['jobTitle'], $_REQUEST['email'], $_REQUEST['departmentID']);
 
 	$query->execute();
 	
@@ -62,7 +62,7 @@
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data']['name'] = $_REQUEST['name'];
+	$output['data']['name'] = $_REQUEST['firstName'].' '.$_REQUEST['lastName'];
 	
 	mysqli_close($conn);
 

@@ -88,6 +88,22 @@ $("document").ready(function () {
 
   $("#addBtn").on("click", function () {
     // Replicate the logic of the refresh button click to open the add modal for the table that is currently on display
+    if ($("#addPersonnelBtn").hasClass("active")) {
+      addPersonnel()
+      $("#addPersonnelFirstName").val('')
+      $("#addPersonnelLastName").val('')
+      $("#addPersonnelJobTitle").val('')
+      $("#addPersonnelEmailAddress").val('')
+      $("#addPersonnelDepartment").val('')
+    } else if ($("#addDepartmentsBtn").hasClass("active")) {
+      addDepartment()
+      $("#addDepartmentName").val('');
+      $("#addPersonnelBtn").trigger('click');
+    } else {
+      addLocation();
+      $("#addLocationName").val('');
+      $("#addPersonnelBtn").trigger('click');
+    }
   });
 
   $("#personnelBtn").on("click", function () {
@@ -487,3 +503,56 @@ function fillDropdowns() {
   }
   
 }
+
+function addPersonnel() {
+  const firstName = $("#addPersonnelFirstName").val()
+  const lastName = $("#addPersonnelLastName").val()
+  const jobTitle = $("#addPersonnelJobTitle").val()
+  const email = $("#addPersonnelEmailAddress").val()
+  const departmentID = $("#addPersonnelDepartment").val()
+  $.ajax({
+    url: "./libs/php/insertPersonnel.php",
+    type: "POST",
+    data: {
+      firstName,
+      lastName,
+      jobTitle,
+      email,
+      departmentID
+    },
+    success: function(result) {
+      alert(`${result.data.name} has been added to Personnel`)
+    }
+  }) 
+}
+
+function addDepartment() {
+  const name = $("#addDepartmentName").val()
+  const locationID = $("#addDepartmentLocation").val()
+  $.ajax({
+    url: "./libs/php/insertDepartment.php",
+    type: "POST",
+    data: {
+      name,
+      locationID
+    },
+    success: function(result) {
+      alert(`${result.data.name} has been added to Departments`)
+    }
+  })  
+}
+
+function addLocation() {
+  const name = $("#addLocationName").val()
+  $.ajax({
+    url: "./libs/php/insertLocation.php",
+    type: "POST",
+    data: {
+      name
+    },
+    success: function(result) {
+      alert(`${result.data.name} has been added to Locations`)
+    }
+  })  
+}
+
