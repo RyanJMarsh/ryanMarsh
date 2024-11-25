@@ -1,8 +1,5 @@
 <?php
 
-	// example use from browser
-	// http://localhost/companydirectory/libs/php/getAllDepartments.php
-
 	// remove next two lines for production	
 	
 	ini_set('display_errors', 'On');
@@ -31,8 +28,6 @@
 		exit;
 
 	}	
-
-	// SQL does not accept parameters and so is not prepared
 
 	$query = 'SELECT * FROM location';
 

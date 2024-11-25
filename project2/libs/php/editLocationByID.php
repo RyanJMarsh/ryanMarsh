@@ -29,8 +29,8 @@
 
 	}
 
-	$name = $_REQUEST['name'];
-	$id = $_REQUEST["id"];
+	$name = $_POST['name'];
+	$id = $_POST["id"];
 
 	$stmt = $conn->prepare('UPDATE location SET name = ? WHERE id = ?');
 	$stmt->bind_param("si", $name, $id);

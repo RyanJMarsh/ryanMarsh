@@ -13,7 +13,6 @@ $("document").ready(function () {
   fillDropdowns()
 
   $("#searchInp").on("keyup", function () {
-    // your code
     if ($("#personnelBtn").hasClass("active")) {
       $.ajax({
         url: "./libs/php/SearchAll.php",
@@ -59,16 +58,13 @@ $("document").ready(function () {
     $("#filterDepartment").val("No Filter");
     $("#filterLocation").val("No Filter");
     if ($("#personnelBtn").hasClass("active")) {
-      // Refresh personnel table
       $("#searchInp").val('');
       fillPersonnelList(getArrayOfAllPersonnel());
     } else {
       if ($("#departmentsBtn").hasClass("active")) {
-        // Refresh department table
         $("#searchInp").val('');
         fillDepartmentsList(getArrayOfAllDepartments());
       } else {
-        // Refresh location table
         $("#searchInp").val('');
         fillLocationsList(getArrayOfAllLocations());
       }
@@ -76,7 +72,6 @@ $("document").ready(function () {
   });
 
   $("#filterBtn").on("click", function () {
-    // Open a modal of your own design that allows the user to apply a filter to the personnel table on either department or location
     if($("#filterDepartment").val() == "No Filter" && $("#filterLocation").val() == "No Filter") {
       $("#personnelBtn").trigger('click');
       fillPersonnelList(getArrayOfAllPersonnel());      
@@ -87,7 +82,6 @@ $("document").ready(function () {
   });
 
   $("#addBtn").on("click", function () {
-    // Replicate the logic of the refresh button click to open the add modal for the table that is currently on display
     if ($("#addPersonnelBtn").hasClass("active")) {
       addPersonnel()
       $("#addPersonnelFirstName").val('')
@@ -108,19 +102,16 @@ $("document").ready(function () {
   });
 
   $("#personnelBtn").on("click", function () {
-    // Call function to refresh personnel table
     $("#searchInp").val('');
     fillPersonnelList(getArrayOfAllPersonnel());
   });
 
   $("#departmentsBtn").on("click", function () {
-    // Call function to refresh department table
     $("#searchInp").val('');
     fillDepartmentsList(getArrayOfAllDepartments());
   });
 
   $("#locationsBtn").on("click", function () {
-    // Call function to refresh location table
     $("#searchInp").val('');
     fillLocationsList(getArrayOfAllLocations());
   });
@@ -137,7 +128,7 @@ $("document").ready(function () {
         var resultCode = result.status.code;
 
         if (resultCode == 200) {
-          $("#editPersonnelEmployeeID").val(result.data.personnel[0].id);
+          $("#editPersonnelID").val(result.data.personnel[0].id);
 
           $("#editPersonnelFirstName").val(result.data.personnel[0].firstName);
           $("#editPersonnelLastName").val(result.data.personnel[0].lastName);
@@ -172,7 +163,30 @@ $("document").ready(function () {
     });
   });
 
-  $("#editPersonnelBtn").on("click", function(e) {})
+  $("#editPersonnelBtn").on("click", function(e) {
+    const id = $("#editPersonnelID").val()
+    const firstName = $("#editPersonnelFirstName").val()
+    const lastName = $("#editPersonnelLastName").val()
+    const jobTitle = $("#editPersonnelJobTitle").val()
+    const email = $("#editPersonnelEmailAddress").val()
+    const departmentID = $("#editPersonnelDepartment").val()
+    $.ajax({
+      url: "./libs/php/editPersonnelByID.php",
+      type: 'POST',
+      data: {
+        firstName,
+        lastName,
+        jobTitle,
+        email,
+        departmentID,
+        id
+      },
+      success: function(result) {
+        alert(`${firstName} ${lastName} has been updated`)
+        $("#refreshBtn").trigger('click')
+      }
+    })
+  })
 
   $("#editDepartmentModal").on("show.bs.modal", function (e) {
     $.ajax({
@@ -216,7 +230,24 @@ $("document").ready(function () {
     });
   });
 
-  $("#editDepartmentBtn").on("click", function(e) {})
+  $("#editDepartmentBtn").on("click", function(e) {
+    const name = $("#editDepartmentName").val();
+    const id = $("#editDepartmentID").val();
+    const locationID = $("#editDepartmentLocation").val()
+    $.ajax({
+      url: "./libs/php/editDepartmentByID.php",
+      type: 'POST',
+      data: {
+        name,
+        locationID,
+        id
+      },
+      success: function(result) {
+        alert(`${name} has been updated`)
+        $("#refreshBtn").trigger('click')
+      }
+    })
+  })
 
   $("#editLocationModal").on("show.bs.modal", function (e) {
     $.ajax({

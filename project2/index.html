@@ -155,9 +155,6 @@
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
     >
-      <!--   the last two classes centre the modal and, if the content is too long, ensures  -->
-      <!--   that the header and footer are always on display by making the body scroll -->
-
       <div
         class="modal-dialog modal-sm modal-dialog-centered modal-dialog-scrollable"
       >
@@ -174,7 +171,7 @@
 
           <div class="modal-body">
             <form id="editPersonnelForm">
-              <input type="hidden" id="editPersonnelEmployeeID" />
+              <input type="hidden" id="editPersonnelID" />
 
               <div class="form-floating mb-3">
                 <input
@@ -234,8 +231,9 @@
           <div class="modal-footer">
             <button
               type="submit"
-              form="editPersonnelForm"
+              id="editPersonnelBtn"
               class="btn btn-outline-success btn-sm myBtn"
+              data-bs-dismiss="modal"
             >
               SAVE
             </button>
@@ -303,8 +301,9 @@
           <div class="modal-footer">
             <button
               type="submit"
-              form="editDepartmentForm"
+              id="editDepartmentBtn"
               class="btn btn-outline-success btn-sm myBtn"
+              data-bs-dismiss="modal"
             >
               SAVE
             </button>

@@ -27,30 +27,21 @@
 
 		exit;
 
-	}	
-
-	$id = $_POST['id'];
-
-	$query = $conn->prepare('DELETE FROM department WHERE id = ?');
-	
-	$query->bind_param("i", $id);
-
-	$query->execute();
-	
-	if (false === $query) {
-
-		$output['status']['code'] = "400";
-		$output['status']['name'] = "executed";
-		$output['status']['description'] = "query failed";	
-		$output['data'] = [];
-
-		mysqli_close($conn);
-
-		echo json_encode($output); 
-
-		exit;
-
 	}
+
+    $id = $_POST["id"];
+	$firstName = $_POST['firstName'];
+    $lastName = $_POST['lastName'];
+	$jobTitle = $_POST['jobTitle'];
+    $email = $_POST['email'];
+    $departmentID = $_POST["departmentID"];
+
+	$stmt = $conn->prepare('UPDATE personnel SET firstName = ?, lastName = ?, jobTitle = ?, email = ?, departmentID = ? WHERE id = ?');
+	$stmt->bind_param("ssssii", $firstName, $lastName, $jobTitle, $email, $departmentID, $id);
+	$stmt->execute();
+
+	$result = $stmt->get_result();
+
 
 	$output['status']['code'] = "200";
 	$output['status']['name'] = "ok";

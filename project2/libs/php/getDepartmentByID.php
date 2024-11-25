@@ -1,8 +1,5 @@
 <?php
 
-	// example use from browser
-	// http://localhost/companydirectory/libs/php/getDepartmentByID.php?id=<id>
-
 	// remove next two lines for production	
 
 	ini_set('display_errors', 'On');
@@ -32,12 +29,11 @@
 
 	}	
 
-	// SQL statement accepts parameters and so is prepared to avoid SQL injection.
-	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
+	$id = $_GET['id'];
 
 	$query = $conn->prepare('SELECT id, name, locationID FROM department WHERE id =  ?');
 
-	$query->bind_param("i", $_REQUEST['id']);
+	$query->bind_param("i", $id);
 
 	$query->execute();
 	

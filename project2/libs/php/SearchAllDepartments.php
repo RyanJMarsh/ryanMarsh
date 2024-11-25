@@ -1,8 +1,5 @@
 <?php
 
-	// example use from browser
-	// http://localhost/companydirectory/libs/php/searchAll.php?txt=<txt>
-
 	// remove next two lines for production
 	
 	ini_set('display_errors', 'On');
@@ -32,14 +29,13 @@
 
 	}	
 
-	// first query - SQL statement accepts parameters and so is prepared to avoid SQL injection.
-	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
+	$txt = $_GET['txt'];
 
 	$query = $conn->prepare('SELECT `d`.`id`, `d`.`name`, `l`.`id` as `locationID`, `l`.`name` AS `location` FROM `department` `d` LEFT JOIN `location` `l` ON (`l`.`id` = `d`.`locationID`) WHERE `d`.`name` LIKE ? OR `l`.`name` LIKE ? ORDER BY `d`.`name`, `l`.`name`');
 
-  $likeText = "%" . $_REQUEST['txt'] . "%";
+  	$likeText = "%" . $txt . "%";
 
-  $query->bind_param("ss", $likeText, $likeText);
+  	$query->bind_param("ss", $likeText, $likeText);
 
 	$query->execute();
 	
@@ -60,7 +56,7 @@
     
 	$result = $query->get_result();
 
-  $found = [];
+  	$found = [];
 
 	while ($row = mysqli_fetch_assoc($result)) {
 

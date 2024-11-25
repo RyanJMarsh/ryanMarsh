@@ -29,9 +29,7 @@
 
 	}	
 
-	// SQL statement accepts parameters and so is prepared to avoid SQL injection.
-	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
-	$id = $_REQUEST['id'];
+	$id = $_POST['id'];
 
 	$query = $conn->prepare('DELETE FROM location WHERE id = ?');
 	
