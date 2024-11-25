@@ -16,7 +16,7 @@ $("document").ready(function () {
     if ($("#personnelBtn").hasClass("active")) {
       $.ajax({
         url: "./libs/php/SearchAll.php",
-        type: "POST",
+        type: "GET",
         dataType: "json",
         data: {
           txt: $("#searchInp").val(),
@@ -29,7 +29,7 @@ $("document").ready(function () {
       if ($("#departmentsBtn").hasClass("active")) {
         $.ajax({
           url: "./libs/php/SearchAllDepartments.php",
-          type: "POST",
+          type: "GET",
           dataType: "json",
           data: {
             txt: $("#searchInp").val(),
@@ -41,7 +41,7 @@ $("document").ready(function () {
       } else {
         $.ajax({
           url: "./libs/php/SearchAllLocations.php",
-          type: "POST",
+          type: "GET",
           dataType: "json",
           data: {
             txt: $("#searchInp").val(),
@@ -88,17 +88,13 @@ $("document").ready(function () {
       $("#addPersonnelLastName").val('')
       $("#addPersonnelJobTitle").val('')
       $("#addPersonnelEmailAddress").val('')
-      $("#addPersonnelDepartment").val('')
     } else if ($("#addDepartmentsBtn").hasClass("active")) {
       addDepartment()
       $("#addDepartmentName").val('');
-      $("#addPersonnelBtn").trigger('click');
     } else {
       addLocation();
       $("#addLocationName").val('');
-      $("#addPersonnelBtn").trigger('click');
     }
-    $("#refreshBtn").trigger('click')
   });
 
   $("#personnelBtn").on("click", function () {
@@ -119,7 +115,7 @@ $("document").ready(function () {
   $("#editPersonnelModal").on("show.bs.modal", function (e) {
     $.ajax({
       url: "./libs/php/getPersonnelByID.php",
-      type: "POST",
+      type: "GET",
       dataType: "json",
       data: {
         id: $(e.relatedTarget).attr("data-id"),
@@ -191,7 +187,7 @@ $("document").ready(function () {
   $("#editDepartmentModal").on("show.bs.modal", function (e) {
     $.ajax({
       url: "./libs/php/getDepartmentByID.php",
-      type: "POST",
+      type: "GET",
       dataType: "json",
       data: {
         id: $(e.relatedTarget).attr("data-id"),
@@ -252,7 +248,7 @@ $("document").ready(function () {
   $("#editLocationModal").on("show.bs.modal", function (e) {
     $.ajax({
       url: "./libs/php/getLocationByID.php",
-      type: "POST",
+      type: "GET",
       dataType: "json",
       data: {
         id: $(e.relatedTarget).attr("data-id"),
@@ -295,7 +291,7 @@ $("document").ready(function () {
   $("#deletePersonnelModal").on("show.bs.modal", function (e) {
     $.ajax({
       url: "./libs/php/getPersonnelByID.php",
-      type: "POST",
+      type: "GET",
       dataType: "json",
       data: {
         id: $(e.relatedTarget).attr("data-id"),
@@ -340,7 +336,7 @@ $("document").ready(function () {
   $("#deleteDepartmentModal").on("show.bs.modal", function (e) {
     $.ajax({
       url: "./libs/php/getDepartmentByID.php",
-      type: "POST",
+      type: "GET",
       dataType: "json",
       data: {
         id: $(e.relatedTarget).attr("data-id"),
@@ -384,7 +380,7 @@ $("document").ready(function () {
   $("#deleteLocationModal").on("show.bs.modal", function (e) {
     $.ajax({
       url: "./libs/php/getLocationByID.php",
-      type: "POST",
+      type: "GET",
       dataType: "json",
       data: {
         id: $(e.relatedTarget).attr("data-id"),
@@ -446,6 +442,7 @@ function getFilteredArrayOfPersonnel() {
   let personnelList;
   const filterDepartment = $("#filterDepartment").val()
   const filterLocation = $("#filterLocation").val()
+  console.log(filterDepartment, filterLocation)
   $.ajax({
     url: "./libs/php/getFilteredPersonnel.php",
     type: "GET",
@@ -622,6 +619,7 @@ function addPersonnel() {
     },
     success: function(result) {
       alert(`${result.data.name} has been added to Personnel`)
+      $("#refreshBtn").trigger('click')
     }
   }) 
 }
@@ -638,6 +636,7 @@ function addDepartment() {
     },
     success: function(result) {
       alert(`${result.data.name} has been added to Departments`)
+      $("#refreshBtn").trigger('click')
     }
   })  
 }
@@ -652,6 +651,7 @@ function addLocation() {
     },
     success: function(result) {
       alert(`${result.data.name} has been added to Locations`)
+      $("#refreshBtn").trigger('click')
     }
   })  
 }
