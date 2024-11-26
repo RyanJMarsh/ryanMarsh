@@ -13,9 +13,23 @@
       href="./node_modules/@fortawesome/fontawesome-free/css/all.min.css"
     />
     <link rel="stylesheet" href="./style.css" />
-    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./favicon-16x16.png"
+    />
     <title>Company Directory</title>
   </head>
   <body>
@@ -48,8 +62,6 @@
                 id="addModalBtn"
                 type="button"
                 class="btn btn-primary"
-                data-bs-toggle="modal"
-                data-bs-target="#addModal"
               >
                 <i class="fa-solid fa-plus fa-fw"></i>
               </button>
@@ -145,7 +157,7 @@
       </div>
 
       <footer class="border-top text-center fw-bold">
-        <p class="fw-light my-3">Company Directory version 1.0</p>
+        <p class="fw-light my-3">Company Directory version 2.0</p>
       </footer>
     </section>
 
@@ -606,7 +618,7 @@
     </div>
 
     <div
-      id="addModal"
+      id="addPersonnelModal"
       class="modal fade"
       tabindex="-1"
       data-bs-backdrop="false"
@@ -625,171 +637,66 @@
               aria-label="Close"
             ></button>
           </div>
-          <ul class="nav nav-tabs" id="addTab" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button
-                class="nav-link active"
-                id="addPersonnelBtn"
-                data-bs-toggle="tab"
-                data-bs-target="#add-personnel-tab-pane"
-                type="button"
-                role="tab"
-                aria-controls="home-tab-pane"
-                aria-selected="true"
-              >
-                <i class="fa-solid fa-person fa-lg fa-fw"></i
-                ><span class="d-none d-sm-block">Personnel</span>
-              </button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button
-                class="nav-link"
-                id="addDepartmentsBtn"
-                data-bs-toggle="tab"
-                data-bs-target="#add-departments-tab-pane"
-                type="button"
-                role="tab"
-                aria-controls="profile-tab-pane"
-                aria-selected="false"
-              >
-                <i class="fa-solid fa-building fa-lg fa-fw"></i
-                ><span class="d-none d-sm-block">Departments</span>
-              </button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button
-                class="nav-link"
-                id="addLocationsBtn"
-                data-bs-toggle="tab"
-                data-bs-target="#add-locations-tab-pane"
-                type="button"
-                role="tab"
-                aria-controls="contact-tab-pane"
-                aria-selected="false"
-              >
-                <i class="fa-solid fa-map-location-dot fa-lg fa-fw"></i
-                ><span class="d-none d-sm-block">Locations</span>
-              </button>
-            </li>
-          </ul>
-          <div class="modal-body text-center tab-content">
-            <div
-              class="tab-pane show active"
-              id="add-personnel-tab-pane"
-              role="tabpanel"
-              aria-labelledby="home-tab"
-              tabindex="0"
-            >
-              <form id="addPersonnelForm">
-                <div class="form-floating mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="addPersonnelFirstName"
-                    placeholder="First Name"
-                    required
-                  />
-                  <label for="addPersonnelFirstName">First name</label>
-                </div>
+          <div class="modal-body text-center">
+            <form id="addPersonnelForm">
+              <div class="form-floating mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="addPersonnelFirstName"
+                  placeholder="First Name"
+                  required
+                />
+                <label for="addPersonnelFirstName">First name</label>
+              </div>
 
-                <div class="form-floating mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="addPersonnelLastName"
-                    placeholder="Last Name"
-                    required
-                  />
-                  <label for="addPersonnelLastName">Last name</label>
-                </div>
+              <div class="form-floating mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="addPersonnelLastName"
+                  placeholder="Last Name"
+                  required
+                />
+                <label for="addPersonnelLastName">Last name</label>
+              </div>
 
-                <div class="form-floating mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="addPersonnelJobTitle"
-                    placeholder="Job Title"
-                    required
-                  />
-                  <label for="addPersonnelJobTitle">Job Title</label>
-                </div>
+              <div class="form-floating mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="addPersonnelJobTitle"
+                  placeholder="Job Title"
+                  required
+                />
+                <label for="addPersonnelJobTitle">Job Title</label>
+              </div>
 
-                <div class="form-floating mb-3">
-                  <input
-                    type="email"
-                    class="form-control"
-                    id="addPersonnelEmailAddress"
-                    placeholder="Email Address"
-                    required
-                  />
-                  <label for="addPersonnelEmailAddress">Email Address</label>
-                </div>
+              <div class="form-floating mb-3">
+                <input
+                  type="email"
+                  class="form-control"
+                  id="addPersonnelEmailAddress"
+                  placeholder="Email Address"
+                  required
+                />
+                <label for="addPersonnelEmailAddress">Email Address</label>
+              </div>
 
-                <div class="form-floating mb-3">
-                  <select
-                    class="form-select"
-                    id="addPersonnelDepartment"
-                    placeholder="Department"
-                  ></select>
-                  <label for="addPersonnelDepartment">Department</label>
-                </div>
-              </form>
-            </div>
-            <div
-              class="tab-pane"
-              id="add-departments-tab-pane"
-              role="tabpanel"
-              aria-labelledby="profile-tab"
-              tabindex="0"
-            >
-              <form id="addDepartmentForm">
-                <div class="form-floating mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="addDepartmentName"
-                    placeholder="Name"
-                    required
-                  />
-                  <label for="addDepartmentName">Name</label>
-                </div>
-
-                <div class="form-floating mb-3">
-                  <select
-                    class="form-select"
-                    id="addDepartmentLocation"
-                    placeholder="Location"
-                  ></select>
-                  <label for="addDepartmentLocation">Location</label>
-                </div>
-              </form>
-            </div>
-
-            <div
-              class="tab-pane"
-              id="add-locations-tab-pane"
-              role="tabpanel"
-              aria-labelledby="contact-tab"
-              tabindex="0"
-            >
-              <form id="addLocationForm">
-                <div class="form-floating mb-3">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="addLocationName"
-                    placeholder="Name"
-                    required
-                  />
-                  <label for="addLocationName">Name</label>
-                </div>
-              </form>
-            </div>
+              <div class="form-floating mb-3">
+                <select
+                  class="form-select"
+                  id="addPersonnelDepartment"
+                  placeholder="Department"
+                ></select>
+                <label for="addPersonnelDepartment">Department</label>
+              </div>
+            </form>
 
             <div class="modal-footer">
               <button
                 type="submit"
-                id="addBtn"
+                id="addPersonnelBtn"
                 class="btn btn-outline-success btn-sm myBtn"
                 data-bs-dismiss="modal"
               >
@@ -803,6 +710,157 @@
                 CANCEL
               </button>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="addDepartmentModal"
+      class="modal fade"
+      tabindex="-1"
+      data-bs-backdrop="false"
+      data-bs-keyboard="false"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content shadow">
+          <div class="modal-header bg-primary bg-gradient text-white">
+            <h5 class="modal-title">Add to Directory</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div class="modal-body text-center tab-content">
+            <form id="addDepartmentForm">
+              <div class="form-floating mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="addDepartmentName"
+                  placeholder="Name"
+                  required
+                />
+                <label for="addDepartmentName">Name</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <select
+                  class="form-select"
+                  id="addDepartmentLocation"
+                  placeholder="Location"
+                ></select>
+                <label for="addDepartmentLocation">Location</label>
+              </div>
+            </form>
+
+            <div class="modal-footer">
+              <button
+                type="submit"
+                id="addDepartmentBtn"
+                class="btn btn-outline-success btn-sm myBtn"
+                data-bs-dismiss="modal"
+              >
+                ADD
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-primary btn-sm myBtn"
+                data-bs-dismiss="modal"
+              >
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="addLocationModal"
+      class="modal fade"
+      tabindex="-1"
+      data-bs-backdrop="false"
+      data-bs-keyboard="false"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content shadow">
+          <div class="modal-header bg-primary bg-gradient text-white">
+            <h5 class="modal-title">Add to Directory</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div class="modal-body text-center tab-content">
+            <form id="addLocationForm">
+              <div class="form-floating mb-3">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="addLocationName"
+                  placeholder="Name"
+                  required
+                />
+                <label for="addLocationName">Name</label>
+              </div>
+            </form>
+
+            <div class="modal-footer">
+              <button
+                type="submit"
+                id="addLocationBtn"
+                class="btn btn-outline-success btn-sm myBtn"
+                data-bs-dismiss="modal"
+              >
+                ADD
+              </button>
+              <button
+                type="button"
+                class="btn btn-outline-primary btn-sm myBtn"
+                data-bs-dismiss="modal"
+              >
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="alertModal"
+      class="modal fade"
+      tabindex="-1"
+      data-bs-backdrop="false"
+      data-bs-keyboard="false"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content shadow">
+          <div class="modal-header bg-primary bg-gradient text-white">
+            <h5 class="modal-title">Alert</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <div class="modal-body text-center tab-content">
+            <p class="mb-3 display-6" id="alertMessage"></p>
           </div>
         </div>
       </div>
