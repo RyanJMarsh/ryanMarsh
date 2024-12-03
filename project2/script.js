@@ -71,17 +71,18 @@ $("document").ready(function () {
     }
   });
 
-  $("#filterBtn").on("click", function () {
-    if (
-      $("#filterDepartment").val() == "No Filter" &&
-      $("#filterLocation").val() == "No Filter"
-    ) {
-      $("#personnelBtn").trigger("click");
-      fillPersonnelList(getArrayOfAllPersonnel());
-    } else {
-      $("#personnelBtn").trigger("click");
-      fillPersonnelList(getFilteredArrayOfPersonnel());
+  $("#filterDepartment").on("change", function () {
+    if (this.value !== "No Filter") {
+      $("#filterLocation").val("No Filter");
     }
+    fillPersonnelList(getFilteredArrayOfPersonnel());
+  });
+
+  $("#filterLocation").on("change", function () {
+    if (this.value !== "No Filter") {
+      $("#filterDepartment").val("No Filter");
+    }
+    fillPersonnelList(getFilteredArrayOfPersonnel());
   });
 
   $("#addModalBtn").on("click", function () {
@@ -94,7 +95,8 @@ $("document").ready(function () {
     }
   });
 
-  $("#addPersonnelBtn").on("click", function () {
+  $("#addPersonnelForm").on("submit", function (e) {
+    e.preventDefault();
     const firstName = $("#addPersonnelFirstName").val();
     const lastName = $("#addPersonnelLastName").val();
     const jobTitle = $("#addPersonnelJobTitle").val();
@@ -111,20 +113,21 @@ $("document").ready(function () {
         departmentID,
       },
       success: function (result) {
-        $("#alertMessage").html(
-          `${result.data.name} has been added to Personnel`
-        );
-        $("#alertModal").modal("show");
+        $("#addPersonnelModal").modal("hide");
         $("#refreshBtn").trigger("click");
-        $("#addPersonnelFirstName").val("");
-        $("#addPersonnelLastName").val("");
-        $("#addPersonnelJobTitle").val("");
-        $("#addPersonnelEmailAddress").val("");
       },
     });
   });
 
-  $("#addDepartmentBtn").on("click", function () {
+  $("#addPersonnelModal").on("hidden.bs.modal", function (e) {
+    $("#addPersonnelFirstName").val("");
+    $("#addPersonnelLastName").val("");
+    $("#addPersonnelJobTitle").val("");
+    $("#addPersonnelEmailAddress").val("");
+  });
+
+  $("#addDepartmentForm").on("submit", function (e) {
+    e.preventDefault();
     const name = $("#addDepartmentName").val();
     const locationID = $("#addDepartmentLocation").val();
     $.ajax({
@@ -135,17 +138,18 @@ $("document").ready(function () {
         locationID,
       },
       success: function (result) {
-        $("#alertMessage").html(
-          `${result.data.name} has been added to Departments`
-        );
-        $("#alertModal").modal("show");
+        $("#addDepartmentModal").modal("hide");
         $("#refreshBtn").trigger("click");
-        $("#addDepartmentName").val("");
       },
     });
   });
 
-  $("#addLocationBtn").on("click", function () {
+  $("#addDepartmentModal").on("hidden.bs.modal", function (e) {
+    $("#addDepartmentName").val("");
+  });
+
+  $("#addLocationForm").on("submit", function (e) {
+    e.preventDefault();
     const name = $("#addLocationName").val();
     $.ajax({
       url: "./libs/php/insertLocation.php",
@@ -154,29 +158,31 @@ $("document").ready(function () {
         name,
       },
       success: function (result) {
-        $("#alertMessage").html(
-          `${result.data.name} has been added to Locations`
-        );
-        $("#alertModal").modal("show");
+        $("#addLocationModal").modal("hide");
         $("#refreshBtn").trigger("click");
-        $("#addLocationName").val("");
       },
     });
-    
+  });
+
+  $("#addLocationModal").on("hidden.bs.modal", function (e) {
+    $("#addLocationName").val("");
   });
 
   $("#personnelBtn").on("click", function () {
     $("#searchInp").val("");
+    $("#filterModalBtn").attr("disabled", false);
     fillPersonnelList(getArrayOfAllPersonnel());
   });
 
   $("#departmentsBtn").on("click", function () {
     $("#searchInp").val("");
+    $("#filterModalBtn").attr("disabled", true);
     fillDepartmentsList(getArrayOfAllDepartments());
   });
 
   $("#locationsBtn").on("click", function () {
     $("#searchInp").val("");
+    $("#filterModalBtn").attr("disabled", true);
     fillLocationsList(getArrayOfAllLocations());
   });
 
@@ -227,7 +233,8 @@ $("document").ready(function () {
     });
   });
 
-  $("#editPersonnelBtn").on("click", function (e) {
+  $("#editPersonnelForm").on("submit", function (e) {
+    e.preventDefault();
     const id = $("#editPersonnelID").val();
     const firstName = $("#editPersonnelFirstName").val();
     const lastName = $("#editPersonnelLastName").val();
@@ -246,8 +253,7 @@ $("document").ready(function () {
         id,
       },
       success: function (result) {
-        $("#alertMessage").html(`${firstName} ${lastName} has been updated`);
-        $("#alertModal").modal("show");
+        $("#editPersonnelModal").modal("hide");
         $("#refreshBtn").trigger("click");
       },
     });
@@ -295,7 +301,8 @@ $("document").ready(function () {
     });
   });
 
-  $("#editDepartmentBtn").on("click", function (e) {
+  $("#editDepartmentForm").on("submit", function (e) {
+    e.preventDefault();
     const name = $("#editDepartmentName").val();
     const id = $("#editDepartmentID").val();
     const locationID = $("#editDepartmentLocation").val();
@@ -308,8 +315,7 @@ $("document").ready(function () {
         id,
       },
       success: function (result) {
-        $("#alertMessage").html(`${name} has been updated`);
-        $("#alertModal").modal("show");
+        $("#editDepartmentModal").modal("hide");
         $("#refreshBtn").trigger("click");
       },
     });
@@ -341,7 +347,8 @@ $("document").ready(function () {
     });
   });
 
-  $("#editLocationBtn").on("click", function (e) {
+  $("#editLocationForm").on("submit", function (e) {
+    e.preventDefault();
     const name = $("#editLocationName").val();
     const id = $("#editLocationID").val();
     $.ajax({
@@ -352,8 +359,7 @@ $("document").ready(function () {
         id,
       },
       success: function (result) {
-        $("#alertMessage").html(`${name} has been updated`);
-        $("#alertModal").modal("show");
+        $("#editLocationModal").modal("hide");
         $("#refreshBtn").trigger("click");
       },
     });
@@ -387,7 +393,8 @@ $("document").ready(function () {
     });
   });
 
-  $("#deletePersonnelBtn").on("click", function (e) {
+  $("#deletePersonnelForm").on("submit", function (e) {
+    e.preventDefault();
     const name = $("#deletePersonnelName").html();
     const id = $("#deletePersonnelID").val();
     $.ajax({
@@ -398,41 +405,15 @@ $("document").ready(function () {
         name,
       },
       success: function (result) {
-        $("#alertMessage").html(`${name} has been removed from Personnel`);
-        $("#alertModal").modal("show");
+        $("#deletePersonnelModal").modal("hide");
         $("#refreshBtn").trigger("click");
       },
     });
-  });
+  });  
 
-  $("#deleteDepartmentModal").on("show.bs.modal", function (e) {
-    $.ajax({
-      url: "./libs/php/getDepartmentByID.php",
-      type: "GET",
-      dataType: "json",
-      data: {
-        id: $(e.relatedTarget).attr("data-id"),
-      },
-      success: function (result) {
-        if (result.status.code == 200) {
-          $("#deleteDepartmentID").val($(e.relatedTarget).attr("data-id"));
-          $("#deleteDepartmentName").html(`${result.data.department[0].name}`);
-        } else {
-          $("#deleteDepartmentModal .modal-title").replaceWith(
-            "Error retrieving data"
-          );
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        $("#deleteDepartmentModal .modal-title").replaceWith(
-          "Error retrieving data"
-        );
-      },
-    });
-  });
-
-  $("#deleteDepartmentBtn").on("click", function (e) {
-    const name = $("#deleteDepartmentName").html();
+  $("#confirmDeleteDepartmentForm").on("submit", function (e) {
+    e.preventDefault();
+    const name = $("#deleteDepartmentName").text();
     const id = $("#deleteDepartmentID").val();
     $.ajax({
       url: "./libs/php/deleteDepartmentByID.php",
@@ -442,40 +423,14 @@ $("document").ready(function () {
         name,
       },
       success: function (result) {
-        $("#alertMessage").html(`${name} has been removed from Departments`);
-        $("#alertModal").modal("show");
+        $("#deleteDepartmentModal").modal("hide");
         $("#refreshBtn").trigger("click");
       },
     });
   });
 
-  $("#deleteLocationModal").on("show.bs.modal", function (e) {
-    $.ajax({
-      url: "./libs/php/getLocationByID.php",
-      type: "GET",
-      dataType: "json",
-      data: {
-        id: $(e.relatedTarget).attr("data-id"),
-      },
-      success: function (result) {
-        if (result.status.code == 200) {
-          $("#deleteLocationID").val($(e.relatedTarget).attr("data-id"));
-          $("#deleteLocationName").html(`${result.data[0].name}`);
-        } else {
-          $("#deleteLocationModal .modal-title").replaceWith(
-            "Error retrieving data"
-          );
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        $("#deletePersonnelModal .modal-title").replaceWith(
-          "Error retrieving data"
-        );
-      },
-    });
-  });
-
-  $("#deleteLocationBtn").on("click", function (e) {
+  $("#confirmDeleteLocationForm").on("submit", function (e) {
+    e.preventDefault();
     const name = $("#deleteLocationName").html();
     const id = $("#deleteLocationID").val();
     $.ajax({
@@ -486,8 +441,7 @@ $("document").ready(function () {
         name,
       },
       success: function (result) {
-        $("#alertMessage").html(`${name} has been removed from Locations`);
-        $("#alertModal").modal("show");
+        $("#deleteLocationModal").modal("hide");
         $("#refreshBtn").trigger("click");
       },
     });
@@ -564,111 +518,314 @@ function fillPersonnelList(personnelList) {
   $("#personnelTableBody").empty();
   $("#departmentTableBody").empty();
   $("#locationTableBody").empty();
-  for (let i = 0; i < personnelList.length; i++) {
-    $("#personnelTableBody").append(`
-      <tr>
-        <td class="align-middle text-nowrap">
-          ${personnelList[i].lastName}, ${personnelList[i].firstName}
-          </td>
-        <td class="align-middle text-nowrap d-none d-md-table-cell">
-          ${personnelList[i].department}
-        </td>
-        <td class="align-middle text-nowrap d-none d-md-table-cell">
-          ${personnelList[i].location}
-        </td>
-        <td class="align-middle text-nowrap d-none d-md-table-cell">
-          ${personnelList[i].email}
-        </td>
-        <td class="text-end text-nowrap">
-          <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editPersonnelModal" data-id="${personnelList[i].id}">
-            <i class="fa-solid fa-pencil fa-fw"></i>
-          </button>
-          <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deletePersonnelModal" data-id="${personnelList[i].id}">
-            <i class="fa-solid fa-trash fa-fw"></i>
-          </button>
-        </td>
-      </tr>
-        `);
-  }
+
+  const frag = document.createDocumentFragment();
+
+  personnelList.forEach(function (item, index) {
+    const row = document.createElement("tr");
+
+    const name = document.createElement("td");
+    name.classList = "align-middle text-nowrap";
+
+    const nameText = document.createTextNode(
+      item.lastName + ", " + item.firstName
+    );
+    name.append(nameText);
+
+    row.append(name);
+
+    const department = document.createElement("td");
+    department.classList = "align-middle text-nowrap d-none d-md-table-cell";
+
+    const departmentText = document.createTextNode(item.department);
+    department.append(departmentText);
+
+    row.append(department);
+
+    const location = document.createElement("td");
+    location.classList = "align-middle text-nowrap d-none d-md-table-cell";
+
+    const locationText = document.createTextNode(item.location);
+    location.append(locationText);
+
+    row.append(location);
+
+    const email = document.createElement("td");
+    email.classList = "align-middle text-nowrap d-none d-md-table-cell";
+
+    const emailText = document.createTextNode(item.email);
+    email.append(emailText);
+
+    row.append(email);
+
+    const buttons = document.createElement("td");
+    buttons.classList = "text-end text-nowrap";
+
+    const editButton = document.createElement("button");
+    editButton.classList = "btn btn-primary btn-sm mx-1";
+    editButton.type = "button";
+    editButton.setAttribute("data-bs-toggle", "modal");
+    editButton.setAttribute("data-bs-target", "#editPersonnelModal");
+    editButton.setAttribute("data-id", item.id);
+
+    const editImg = document.createElement("i");
+    editImg.classList = "fa-solid fa-pencil fa-fw";
+
+    editButton.append(editImg);
+    buttons.append(editButton);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.classList = "btn btn-primary btn-sm";
+    deleteButton.type = "button";
+    deleteButton.setAttribute("data-bs-toggle", "modal");
+    deleteButton.setAttribute("data-bs-target", "#deletePersonnelModal");
+    deleteButton.setAttribute("data-id", item.id);
+
+    const deleteImg = document.createElement("i");
+    deleteImg.classList = "fa-solid fa-trash fa-fw";
+
+    deleteButton.append(deleteImg);
+    buttons.append(deleteButton);
+
+    row.append(buttons);
+
+    frag.append(row);
+  });
+
+  $("#personnelTableBody").append(frag);
 }
 
 function fillDepartmentsList(departmentsList) {
   $("#personnelTableBody").empty();
   $("#departmentTableBody").empty();
   $("#locationTableBody").empty();
-  for (let i = 0; i < departmentsList.length; i++) {
-    $("#departmentTableBody").append(`
-      <tr>
-        <td class="align-middle text-nowrap">
-          ${departmentsList[i].name}
-        </td>
-        <td class="align-middle text-nowrap d-none d-md-table-cell">
-          ${departmentsList[i].location}
-        </td>
-        <td class="align-middle text-end text-nowrap">
-          <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editDepartmentModal" data-id="${departmentsList[i].id}">
-          <i class="fa-solid fa-pencil fa-fw"></i>
-          </button>
-          <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteDepartmentModal" data-id="${departmentsList[i].id}">
-            <i class="fa-solid fa-trash fa-fw"></i>
-          </button>
-        </td>
-      </tr>    
-        `);
-  }
+
+  const frag = document.createDocumentFragment();
+
+  departmentsList.forEach(function (item, index) {
+    const row = document.createElement("tr");
+
+    const name = document.createElement("td");
+    name.classList = "align-middle text-nowrap";
+
+    const nameText = document.createTextNode(item.name);
+    name.append(nameText);
+
+    row.append(name);
+
+    const location = document.createElement("td");
+    location.classList = "align-middle text-nowrap d-none d-md-table-cell";
+
+    const locationText = document.createTextNode(item.location);
+    location.append(locationText);
+
+    row.append(location);
+
+    const buttons = document.createElement("td");
+    buttons.classList = "text-end text-nowrap";
+
+    const editButton = document.createElement("button");
+    editButton.classList = "btn btn-primary btn-sm mx-1";
+    editButton.type = "button";
+    editButton.setAttribute("data-bs-toggle", "modal");
+    editButton.setAttribute("data-bs-target", "#editDepartmentModal");
+    editButton.setAttribute("data-id", item.id);
+
+    const editImg = document.createElement("i");
+    editImg.classList = "fa-solid fa-pencil fa-fw";
+
+    editButton.append(editImg);
+    buttons.append(editButton);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.classList = "btn btn-primary btn-sm deleteDepartmentBtn";    
+    deleteButton.setAttribute("data-id", item.id);
+
+    const deleteImg = document.createElement("i");
+    deleteImg.classList = "fa-solid fa-trash fa-fw";
+
+
+    deleteButton.append(deleteImg);
+    buttons.append(deleteButton);
+
+    row.append(buttons);
+
+    frag.append(row);
+  });
+  $("#departmentTableBody").append(frag);
+
+  $(".deleteDepartmentBtn").on("click", function (e) {   
+    const id =  $(this).attr("data-id")
+    $.ajax({
+      url: "./libs/php/checkDepartmentUse.php",
+      type: "GET",
+      dataType: "json",
+      data: {
+        id
+      },
+      success: function (result) {
+        if (result.status.code == 200) {
+          if (result.data[0].personnelCount == 0) {
+            $("#deleteDepartmentID").val(id);
+            $("#deleteDepartmentName").text(result.data[0].departmentName);
+            $("#deleteDepartmentModal").modal("show")
+          } else {
+            $("#cannotDeleteDepartmentName").text(result.data[0].departmentName)
+            $("#personnelCount").text(result.data[0].personnelCount)
+            $("#cannotDeleteDepartmentModal").modal("show")
+          }
+        } else {
+          $("#deleteDepartmentModal .modal-title").replaceWith(
+            "Error retrieving data"
+          );
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        $("#deleteDepartmentModal .modal-title").replaceWith(
+          "Error retrieving data"
+        );
+      },
+    });
+    
+  });
 }
 
 function fillLocationsList(locationsList) {
   $("#personnelTableBody").empty();
   $("#departmentTableBody").empty();
   $("#locationTableBody").empty();
-  for (let i = 0; i < locationsList.length; i++) {
-    $("#locationTableBody").append(`
-      <tr>
-        <td class="align-middle text-nowrap">
-        ${locationsList[i].name}
-        </td>
-        <td class="align-middle text-end text-nowrap">
-          <button type="button" class="btn btn-primary btn-sm"data-bs-toggle="modal" data-bs-target="#editLocationModal" data-id="${locationsList[i].id}">
-            <i class="fa-solid fa-pencil fa-fw"></i>
-          </button>
-          <button type="button" class="btn btn-danger btn-sm"data-bs-toggle="modal" data-bs-target="#deleteLocationModal" data-id="${locationsList[i].id}">
-            <i class="fa-solid fa-trash fa-fw"></i>
-          </button>
-        </td>
-      </tr>
-        `);
-  }
+
+  const frag = document.createDocumentFragment();
+
+  locationsList.forEach(function (item, index) {
+    const row = document.createElement("tr");
+
+    const name = document.createElement("td");
+    name.classList = "align-middle text-nowrap";
+
+    const nameText = document.createTextNode(item.name);
+    name.append(nameText);
+
+    row.append(name);
+
+    const buttons = document.createElement("td");
+    buttons.classList = "text-end text-nowrap";
+
+    const editButton = document.createElement("button");
+    editButton.classList = "btn btn-primary btn-sm mx-1";
+    editButton.type = "button";
+    editButton.setAttribute("data-bs-toggle", "modal");
+    editButton.setAttribute("data-bs-target", "#editLocationModal");
+    editButton.setAttribute("data-id", item.id);
+
+    const editImg = document.createElement("i");
+    editImg.classList = "fa-solid fa-pencil fa-fw";
+
+    editButton.append(editImg);
+    buttons.append(editButton);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.classList = "btn btn-primary btn-sm deleteLocationBtn";
+    deleteButton.type = "button";
+    deleteButton.setAttribute("data-id", item.id);
+
+    const deleteImg = document.createElement("i");
+    deleteImg.classList = "fa-solid fa-trash fa-fw";
+
+    deleteButton.append(deleteImg);
+    buttons.append(deleteButton);
+
+    row.append(buttons);
+
+    frag.append(row);
+  });
+  $("#locationTableBody").append(frag);
+
+  $(".deleteLocationBtn").on("click", function (e) {   
+    const id =  $(this).attr("data-id")
+    $.ajax({
+      url: "./libs/php/checkLocationUse.php",
+      type: "GET",
+      dataType: "json",
+      data: {
+        id
+      },
+      success: function (result) {
+        if (result.status.code == 200) {
+          if (result.data[0].departmentCount == 0) {
+            $("#deleteLocationID").val(id);
+            $("#deleteLocationName").text(result.data[0].locationName);
+            $("#deleteLocationModal").modal("show")
+          } else {
+            $("#cannotDeleteLocationName").text(result.data[0].locationName)
+            $("#departmentCount").text(result.data[0].departmentCount)
+            $("#cannotDeleteLocationModal").modal("show")
+          }
+        } else {
+          $("#deleteLocationModal .modal-title").replaceWith(
+            "Error retrieving data"
+          );
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        $("#deleteLocationModal .modal-title").replaceWith(
+          "Error retrieving data"
+        );
+      },
+    });
+  });
 }
 
 function fillDropdowns() {
   const departments = getArrayOfAllDepartments();
   const locations = getArrayOfAllLocations();
-  for (let i = 0; i < departments.length; i++) {
-    $("#filterDepartment").append(
-      `<option value=${departments[i].id}>${departments[i].name}</option>
-      `
-    );
-  }
 
-  for (let i = 0; i < locations.length; i++) {
-    $("#filterLocation").append(
-      `<option value=${locations[i].id}>${locations[i].name}</option>
-      `
-    );
-  }
+  const filterDepartmentFrag = document.createDocumentFragment();
+  departments.forEach(function (item, index) {
+    const option = document.createElement("option");
+    option.value = item.id;
 
-  for (let i = 0; i < departments.length; i++) {
-    $("#addPersonnelDepartment").append(
-      `<option value=${departments[i].id}>${departments[i].name}</option>
-      `
-    );
-  }
+    const optionText = document.createTextNode(item.name);
+    option.append(optionText);
 
-  for (let i = 0; i < locations.length; i++) {
-    $("#addDepartmentLocation").append(
-      `<option value=${locations[i].id}>${locations[i].name}</option>
-      `
-    );
-  }
+    filterDepartmentFrag.append(option);
+  });
+  $("#filterDepartment").append(filterDepartmentFrag);
+
+  const addPersonnelDepartmentFrag = document.createDocumentFragment();
+  departments.forEach(function (item, index) {
+    const option = document.createElement("option");
+    option.value = item.id;
+
+    const optionText = document.createTextNode(item.name);
+    option.append(optionText);
+
+    addPersonnelDepartmentFrag.append(option);
+  });
+  $("#addPersonnelDepartment").append(addPersonnelDepartmentFrag);
+
+  const filterLocationFrag = document.createDocumentFragment();
+  locations.forEach(function (item, index) {
+    const option = document.createElement("option");
+    option.value = item.id;
+
+    const optionText = document.createTextNode(item.name);
+    option.append(optionText);
+
+    filterLocationFrag.append(option);
+  });
+  $("#filterLocation").append(filterLocationFrag);
+
+  const addDepartmentLocationFrag = document.createDocumentFragment();
+  locations.forEach(function (item, index) {
+    const option = document.createElement("option");
+    option.value = item.id;
+
+    const optionText = document.createTextNode(item.name);
+    option.append(optionText);
+
+    addDepartmentLocationFrag.append(option);
+  });
+  $("#addDepartmentLocation").append(addDepartmentLocationFrag);
 }

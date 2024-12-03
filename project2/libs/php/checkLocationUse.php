@@ -1,7 +1,7 @@
 <?php
 
 	// remove next two lines for production	
-	
+
 	ini_set('display_errors', 'On');
 	error_reporting(E_ALL);
 
@@ -20,35 +20,40 @@
 		$output['status']['description'] = "database unavailable";
 		$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
 		$output['data'] = [];
-
+		
 		mysqli_close($conn);
 
 		echo json_encode($output);
-
+		
 		exit;
 
 	}	
 
-	$query = 'SELECT id, name FROM location ORDER BY name';
+	$id = $_GET['id'];
 
-	$result = $conn->query($query);
+	$query = $conn->prepare('SELECT l.name as locationName, COUNT(d.id) as departmentCount FROM location l LEFT JOIN department d ON (d.locationID = l.id) WHERE l.id =  ?');
+
+	$query->bind_param("i", $id);
+
+	$query->execute();
 	
-	if (!$result) {
+	if (false === $query) {
 
 		$output['status']['code'] = "400";
 		$output['status']['name'] = "executed";
 		$output['status']['description'] = "query failed";	
 		$output['data'] = [];
 
-		mysqli_close($conn);
-
 		echo json_encode($output); 
-
+	
+		mysqli_close($conn);
 		exit;
 
 	}
-   
-  $data = [];
+
+	$result = $query->get_result();
+
+   	$data = [];
 
 	while ($row = mysqli_fetch_assoc($result)) {
 
@@ -56,14 +61,15 @@
 
 	}
 
+	
 	$output['status']['code'] = "200";
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
 	$output['data'] = $data;
-	
-	mysqli_close($conn);
 
 	echo json_encode($output); 
+
+	mysqli_close($conn);
 
 ?>

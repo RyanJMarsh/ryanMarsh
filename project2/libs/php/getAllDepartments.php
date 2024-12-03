@@ -29,7 +29,7 @@
 
 	}	
 
-	$query = 'SELECT d.id, d.name, l.name as location FROM department d LEFT JOIN location l ON (l.id = d.locationID) ORDER BY d.id, d.name, location';
+	$query = 'SELECT d.id, d.name, l.name as location FROM department d LEFT JOIN location l ON (l.id = d.locationID) ORDER BY d.name, location';
 
 	$result = $conn->query($query);
 	

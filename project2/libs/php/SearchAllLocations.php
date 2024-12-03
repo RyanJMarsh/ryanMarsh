@@ -31,7 +31,7 @@
 
 	$txt = $_GET['txt'];
 
-	$query = $conn->prepare('SELECT * FROM location `l` WHERE `l`.`name` LIKE ? ORDER BY `l`.`id`, `l`.`name`');
+	$query = $conn->prepare('SELECT id, name FROM location `l` WHERE `l`.`name` LIKE ? ORDER BY `l`.`name`');
 
   	$likeText = "%" . $txt . "%";
 
