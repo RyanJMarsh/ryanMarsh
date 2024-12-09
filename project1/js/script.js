@@ -75,6 +75,13 @@ const cityIcon = L.ExtraMarkers.icon({
   shape: "square",
 });
 
+const otherIcon = L.ExtraMarkers.icon({
+  prefix: "fa",
+  icon: "fa-times",
+  markerColor: "red",
+  shape: "square"
+})
+
 $(document).ready(function () {
   const streets = L.tileLayer(
     "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
@@ -128,50 +135,99 @@ $(document).ready(function () {
   map.locate({ setView: true, maxZoom: 16 });
 
   function populateDropdown() {
-    countryList = getCountryList();
-    countryList = getCapitals(countryList);
-    $.each(countryList, function (i, p) {
-      $("#dropdown").append(
-        $(`<option id=${p.name}></option>`).val(JSON.stringify(p)).html(p.name)
-      );
+    $.ajax({
+      dataType: "json",
+      url: "./data/getAllNamesCodesFromJSON.php",
+      async: false,
+      success: function (data) {
+        countryList = data.sort((a, b) => a.name.localeCompare(b.name));
+        $.ajax({
+          dataType: "json",
+          url: "./data/getCapitalsData.php",
+          async: false,
+          success: function (data) {
+            if (data.status.name == "ok") {
+              countryList.forEach((country) => {
+                data.data.data.forEach((countryData) => {
+                  if (country.cca3 == countryData.iso3) {
+                    country.capital = countryData.capital;
+                  }
+                });
+              });
+              $.each(countryList, function (i, p) {
+                $("#dropdown").append(
+                  $(`<option id=${p.name}></option>`)
+                    .val(JSON.stringify(p))
+                    .html(p.name)
+                );
+              });
+            } else {
+              alert(data.status.name);
+            }
+          },
+          error: function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, errorThrown);
+          },
+        });
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+      },
     });
   }
 
   function onLocationFound(e) {
-    const countryName = getCountryNameFromCoords(e.latitude, e.longitude);
-    if (countryName.is_country) {
-      let cca2;
-      let cca3;
-      let capital;
+    $.ajax({
+      dataType: "json",
+      url: "./data/getCountryNameFromCoords.php",
+      data: {
+        lat: e.latitude,
+        lng: e.longitude,
+      },
+      success: function (data) {
+        if (data.status.name == "ok") {
+          const countryName = data.data;
+          if (countryName.is_country) {
+            let cca2;
+            let cca3;
+            let capital;
 
-      for (let i = 0; i < countryList.length; i++) {
-        if (countryList[i].name == countryName.name) {
-          cca2 = countryList[i].cca2;
-          cca3 = countryList[i].cca3;
-          capital = countryList[i].capital;
+            for (let i = 0; i < countryList.length; i++) {
+              if (countryList[i].name == countryName.name) {
+                cca2 = countryList[i].cca2;
+                cca3 = countryList[i].cca3;
+                capital = countryList[i].capital;
+              }
+            }
+
+            country = {
+              name: countryName.name,
+              cca2: cca2,
+              cca3: cca3,
+              capital: capital,
+            };
+
+            selectCountry();
+          } else {
+            if (capitalMarker) {
+              map.removeLayer(capitalMarker);
+            }
+            if (polygon) {
+              map.removeLayer(polygon);
+            }
+            capitalMarker = L.marker(e.latlng, { icon: otherIcon })
+              .addTo(map)
+              .bindPopup(`${countryName.name}`)
+              .openPopup();
+          }
+        } else {
+          alert(data.status.name);
         }
-      }
-
-      country = {
-        name: countryName.name,
-        cca2: cca2,
-        cca3: cca3,
-        capital: capital,
-      };
-
-      selectCountry();
-    } else {
-      if (capitalMarker) {
-        map.removeLayer(capitalMarker);
-      }
-      if (polygon) {
-        map.removeLayer(polygon);
-      }
-      capitalMarker = L.marker(e.latlng)
-        .addTo(map)
-        .bindPopup(`${countryName.name}`)
-        .openPopup();
-    }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+      },
+    });
   }
 
   function onLocationError(e) {
@@ -186,40 +242,56 @@ $(document).ready(function () {
   }
 
   function onMapClick(e) {
-    const countryName = getCountryNameFromCoords(e.latlng.lat, e.latlng.lng);
+    $.ajax({
+      dataType: "json",
+      url: "./data/getCountryNameFromCoords.php",
+      data: {
+        lat: e.latlng.lat,
+        lng: e.latlng.lng,
+      },
+      success: function (data) {
+        if (data.status.name == "ok") {
+          const countryName = data.data;
+          let cca2;
+          let cca3;
+          let capital;
 
-    let cca2;
-    let cca3;
-    let capital;
+          for (let i = 0; i < countryList.length; i++) {
+            if (countryList[i].name == countryName.name) {
+              cca2 = countryList[i].cca2;
+              cca3 = countryList[i].cca3;
+              capital = countryList[i].capital;
+            }
+          }
 
-    for (let i = 0; i < countryList.length; i++) {
-      if (countryList[i].name == countryName.name) {
-        cca2 = countryList[i].cca2;
-        cca3 = countryList[i].cca3;
-        capital = countryList[i].capital;
-      }
-    }
-
-    country = {
-      name: countryName.name,
-      cca2: cca2,
-      cca3: cca3,
-      capital: capital,
-    };
-    if (country.cca3) {
-      selectCountry();
-    } else {
-      if (capitalMarker) {
-        map.removeLayer(capitalMarker);
-      }
-      if (polygon) {
-        map.removeLayer(polygon);
-      }
-      capitalMarker = L.marker(e.latlng)
-        .addTo(map)
-        .bindPopup(`${countryName.name}`)
-        .openPopup();
-    }
+          country = {
+            name: countryName.name,
+            cca2: cca2,
+            cca3: cca3,
+            capital: capital,
+          };
+          if (country.cca3) {
+            selectCountry();
+          } else {
+            if (capitalMarker) {
+              map.removeLayer(capitalMarker);
+            }
+            if (polygon) {
+              map.removeLayer(polygon);
+            }
+            capitalMarker = L.marker(e.latlng, { icon: otherIcon })
+              .addTo(map)
+              .bindPopup(`${countryName.name}`)
+              .openPopup();
+          }
+        } else {
+          alert(data.status.name);
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+      },
+    });
   }
 
   function selectFromDropdown() {
@@ -255,114 +327,286 @@ $(document).ready(function () {
     }
 
     //borders
-    const borderLatlngs = getCountryBordersFromCca3(country.cca3);
-    polygon = L.polygon(borderLatlngs, { color: "red" }).addTo(map);
-    map.fitBounds(polygon.getBounds());
+    $.ajax({
+      dataType: "json",
+      url: "./data/getBorderByCodeFromJSON.php",
+      data: {
+        cca3: country.cca3,
+      },
+      success: function (data) {
+        if (data.type == "Polygon") {
+          const latlngs = L.GeoJSON.coordsToLatLngs(data.coordinates, 1, false);
+          polygon = L.polygon(latlngs, { color: "red" }).addTo(map);
+          map.fitBounds(polygon.getBounds());
+        } else {
+          const latlngs = L.GeoJSON.coordsToLatLngs(data.coordinates, 2, false);
+          polygon = L.polygon(latlngs, { color: "red" }).addTo(map);
+          map.fitBounds(polygon.getBounds());
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+      },
+    });
 
     //capital
     const capName = `${country.capital} ${country.name}`.replace(/ /g, "+");
-
-    const capitalLatlngs = getLatlngsByName(capName);
-    if (!country.capital) {
-      capitalMarker = L.marker(capitalLatlngs, { icon: capitalIcon });
-
-      map.addLayer(capitalMarker);
-      capitalMarker.bindTooltip(`${country.name}`, {
-        direction: "top",
-        sticky: true,
-      });
-    } else {
-      capitalMarker = L.marker(capitalLatlngs, { icon: capitalIcon });
-
-      map.addLayer(capitalMarker);
-      capitalMarker.bindTooltip(
-        `${country.capital}<br>Capital of ${country.name}`,
-        { direction: "top", sticky: true }
-      );
-    }
-
-    //info modal
-
-    const countryInfo = getCountryInfoFromCca3(country.cca3);
-
-    const languagesArr = Object.values(countryInfo.languages);
-    const languages = languagesArr.join(", ");
-    const currency = Object.values(countryInfo.currency);
-
-    $("#infoFlag").html(`<img src=${countryInfo.flag} height="100">`);
-    $("#infoCoat").html(`<img src=${countryInfo.coat} height="100">`);
-    $("#infoName").html(country.name);
-    $("#infoContinent").html(countryInfo.continent[0]);
-    $("#infoPopulation").html(countryInfo.population.toLocaleString());
-    $("#infoLanguages").html(languages);
-    $("#infoCurrency").empty();
-    $.each(currency, function (i, p) {
-      $("#infoCurrency").append(`${p.name}, ${p.symbol} <br>`);
+    $.ajax({
+      dataType: "json",
+      url: "./data/getLatlngByNameData.php",
+      data: {
+        name: capName,
+      },
+      success: function (data) {
+        if (data.status.name == "ok") {
+          const capitalLatlngs = data.data;
+          if (!country.capital) {
+            capitalMarker = L.marker(capitalLatlngs, { icon: capitalIcon });
+            map.addLayer(capitalMarker);
+            capitalMarker.bindTooltip(`${country.name}`, {
+              direction: "top",
+              sticky: true,
+            });
+          } else {
+            capitalMarker = L.marker(capitalLatlngs, { icon: capitalIcon });
+            map.addLayer(capitalMarker);
+            capitalMarker.bindTooltip(
+              `${country.capital}<br>Capital of ${country.name}`,
+              { direction: "top", sticky: true }
+            );
+          }
+        } else {
+          alert(data.status.name);
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+      },
     });
+    //info modal
+    $.ajax({
+      dataType: "json",
+      url: "./data/getCountryInfoFromCodeData.php",
+      data: {
+        cca3: country.cca3,
+      },
+      success: function (data) {
+        if (data.status.name == "ok") {
+          const countryInfo = data.data;
+          const languagesArr = Object.values(countryInfo.languages);
+          const languages = languagesArr.join(", ");
+          const currency = Object.values(countryInfo.currency);
+          $("#infoFlag").html(`<img src=${countryInfo.flag} height="100">`);
+          $("#infoCoat").html(`<img src=${countryInfo.coat} height="100">`);
+          $("#infoName").html(country.name);
+          $("#infoContinent").html(countryInfo.continent[0]);
+          $("#infoPopulation").html(countryInfo.population.toLocaleString());
+          $("#infoLanguages").html(languages);
+          $("#infoCurrency").empty();
+          $.each(currency, function (i, p) {
+            $("#infoCurrency").append(`${p.name}, ${p.symbol} <br>`);
+          });
 
+          //borders modal
+          $("#borderCountries").empty();
+          for (let i = 0; i < countryInfo.borders.length; i++) {
+            for (let j = 0; j < countryList.length; j++) {
+              if (countryList[j].cca3 == countryInfo.borders[i]) {
+                $("#borderCountries").append(
+                  $("<tr class='text-center'></tr>").html(
+                    `${countryList[j].name}, ${countryList[j].cca3}`
+                  )
+                );
+              }
+            }
+          }
+          //currency modal
+          $("#currencyExchange").empty();
+          $("#currencyExchangeRate").empty();
+          $.ajax({
+            dataType: "json",
+            url: "./data/getListOfCurrencies.php",
+            success: function (data) {
+              if (data.status.name == "ok") {
+                const list = data.data;
+                let currencies = [];
+                const listValues = Object.values(list);
+                currency.forEach((item) => {
+                  for (let i = 0; i < listValues.length; i++) {
+                    if (
+                      listValues[i]
+                        .toLowerCase()
+                        .includes(item.name.toLowerCase())
+                    ) {
+                      currencies.push(Object.keys(list)[i]);
+                    }
+                  }
+                });
+                if (currencies.length == 0) {
+                  console.log("No currency information available");
+                } else {
+                  $.ajax({
+                    dataType: "json",
+                    url: "./data/getCurrencyRates.php",
+                    data: {
+                      currencies: currencies.join(),
+                    },
+                    success: function (data) {
+                      if (data.status.name == "ok") {
+                        const rates = data.data.rates;
+                        $.each(currencies, function (i, p) {
+                          $("#currencyExchange").append(
+                            $("<option></option>").val(rates[p]).html(p)
+                          );
+                        });
+                        const rate = $("#currencyExchange").val();
+                        $("#currencyExchangeRate").html(rate);
+                      } else {
+                        alert(data.status.name);
+                      }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                      console.log(textStatus, errorThrown);
+                    },
+                  });
+                }
+                $("#dropdown").val(JSON.stringify(country));
+              } else {
+                alert(data.status.name);
+              }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              console.log(textStatus, errorThrown);
+            },
+          });
+        } else {
+          alert(data.status.name);
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+      },
+    });
     //weather modal
-    const weatherInfo = getWeatherInfo(capName);
+    $.ajax({
+      dataType: "json",
+      url: "./data/getWeatherDataFromCoords.php",
+      data: {
+        capital: capName,
+      },
+      success: function (data) {
+        if (data.status.name == "ok") {
+          const weatherInfo = data.data;
+          $("#weatherModalTitle").html(`${country.capital}, ${country.name}`);
 
-    $("#weatherModalTitle").html(`${country.capital}, ${country.name}`);
+          $("#dayOneCondition").html(`${weatherInfo.dayOne.condition}`);
+          $("#dayOneIcon").attr("src", `${weatherInfo.dayOne.icon}`);
+          $("#dayOneMaxTemp").html(`${weatherInfo.dayOne.maxTemp}`);
+          $("#dayOneMinTemp").html(`${weatherInfo.dayOne.minTemp}`);
 
-    $("#dayOneCondition").html(`${weatherInfo.dayOne.condition}`);
-    $("#dayOneIcon").attr("src", `${weatherInfo.dayOne.icon}`);
-    $("#dayOneMaxTemp").html(`${weatherInfo.dayOne.maxTemp}`);
-    $("#dayOneMinTemp").html(`${weatherInfo.dayOne.minTemp}`);
+          $("#dayTwoDate").html(
+            `${dayjs(weatherInfo.dayTwo.date).format("ddd DD MMM")}`
+          );
+          $("#dayTwoIcon").attr("src", `${weatherInfo.dayTwo.icon}`);
+          $("#dayTwoMaxTemp").html(`${weatherInfo.dayTwo.maxTemp}`);
+          $("#dayTwoMinTemp").html(`${weatherInfo.dayTwo.minTemp}`);
 
-    $("#dayTwoDate").html(
-      `${dayjs(weatherInfo.dayTwo.date).format("ddd DD MMM")}`
-    );
-    $("#dayTwoIcon").attr("src", `${weatherInfo.dayTwo.icon}`);
-    $("#dayTwoMaxTemp").html(`${weatherInfo.dayTwo.maxTemp}`);
-    $("#dayTwoMinTemp").html(`${weatherInfo.dayTwo.minTemp}`);
-
-    $("#dayThreeDate").html(
-      `${dayjs(weatherInfo.dayThree.date).format("ddd DD MMM")}`
-    );
-    $("#dayThreeIcon").attr("src", `${weatherInfo.dayThree.icon}`);
-    $("#dayThreeMaxTemp").html(`${weatherInfo.dayThree.maxTemp}`);
-    $("#dayThreeMinTemp").html(`${weatherInfo.dayThree.minTemp}`);
+          $("#dayThreeDate").html(
+            `${dayjs(weatherInfo.dayThree.date).format("ddd DD MMM")}`
+          );
+          $("#dayThreeIcon").attr("src", `${weatherInfo.dayThree.icon}`);
+          $("#dayThreeMaxTemp").html(`${weatherInfo.dayThree.maxTemp}`);
+          $("#dayThreeMinTemp").html(`${weatherInfo.dayThree.minTemp}`);
+        } else {
+          alert(data.status.name);
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+      },
+    });
 
     //airport markers
-
-    const airportsList = getAirportsByCca2(country.cca2);
-    airportsList.forEach((airport) => {
-      const airportMark = L.marker([airport.latitude, airport.longitude], {
-        icon: airportIcon,
-      });
-      airportMark.bindTooltip(`${airport.name}`, {
-        direction: "top",
-        sticky: true,
-      });
-      airportsMarks.push(airportMark);
+    $.ajax({
+      dataType: "json",
+      url: "./data/getAirportsByCca2.php",
+      data: {
+        cca2: country.cca2,
+      },
+      success: function (data) {
+        if (data.status.name == "ok") {
+          const airportsList = data.data;
+          airportsList.forEach((airport) => {
+            const airportMark = L.marker(
+              [airport.latitude, airport.longitude],
+              {
+                icon: airportIcon,
+              }
+            );
+            airportMark.bindTooltip(`${airport.name}`, {
+              direction: "top",
+              sticky: true,
+            });
+            airportsMarks.push(airportMark);
+          });
+          airports.addLayers(airportsMarks);
+        } else {
+          alert(data.status.name);
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+      },
     });
-    airports.addLayers(airportsMarks);
 
     //city markers
-
-    const citiesList = getCitiesByCca2(country.cca2);
-    citiesList.forEach((city) => {
-      const cityMark = L.marker([city.latitude, city.longitude], {
-        icon: cityIcon,
-      });
-      cityMark.bindTooltip(`${city.name}`, { direction: "top", sticky: true });
-      citiesMarks.push(cityMark);
+    $.ajax({
+      dataType: "json",
+      url: "./data/getCitiesByCca2.php",
+      data: {
+        cca2: country.cca2,
+      },
+      success: function (data) {
+        if (data.status.name == "ok") {
+          const citiesList = data.data;
+          citiesList.forEach((city) => {
+            const cityMark = L.marker([city.latitude, city.longitude], {
+              icon: cityIcon,
+            });
+            cityMark.bindTooltip(`${city.name}`, {
+              direction: "top",
+              sticky: true,
+            });
+            citiesMarks.push(cityMark);
+          });
+          cities.addLayers(citiesMarks);
+        } else {
+          alert(data.status.name);
+        }
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+      },
     });
-    cities.addLayers(citiesMarks);
 
     //news modal
-
     const countryName = `${country.name}`.replace(/ /g, "+");
-    const news = getLatestNews(countryName).articles;
-
-    $("#newsArticles").empty();
-    for (let i = 0; i < news.length; i++) {
-      if (news[i].urlToImage == null) {
-        continue;
-      } else {
-        $("#newsArticles").append(
-          `<table class="table table-borderless">
+    $.ajax({
+      dataType: "json",
+      url: "./data/getNewsByCountry.php",
+      data: {
+        name: countryName,
+      },
+      success: function (data) {
+        if (data.status.name == "ok") {
+          const news = data.data.articles;
+          $("#newsArticles").empty();
+          for (let i = 0; i < news.length; i++) {
+            if (news[i].urlToImage == null) {
+              continue;
+            } else {
+              $("#newsArticles").append(
+                `<table class="table table-borderless">
               <tr>
                 <td rowspan="2" width="50%">
                   <img class="img-fluid rounded" src="${news[i].urlToImage}">
@@ -378,112 +622,9 @@ $(document).ready(function () {
               </tr>
             </table>
             <hr>`
-        );
-      }
-    }
-  
-    //border neighbours modal
-
-    $("#borderCountries").empty();
-    for (let i = 0; i < countryInfo.borders.length; i++) {
-      for (let j = 0; j < countryList.length; j++) {
-        if (countryList[j].cca3 == countryInfo.borders[i]) {
-          $("#borderCountries").append(
-            $("<tr class='text-center'></tr>").html(
-              `${countryList[j].name}, ${countryList[j].cca3}`
-            )
-          );
-        }
-      }
-    }
-
-    //currency modal
-
-    $("#currencyExchange").empty();
-    $("#currencyExchangeRate").empty();
-    const list = getListOfCurrencies();
-    let currencies = [];
-    const listValues = Object.values(list);
-    currency.forEach((item) => {
-      for (let i = 0; i < listValues.length; i++) {
-        if (listValues[i].toLowerCase().includes(item.name.toLowerCase())) {
-          currencies.push(Object.keys(list)[i]);
-        }
-      }
-    });
-    if (currencies.length == 0) {
-      console.log("No currency information available");
-    } else {
-      const rates = getCurrencyRates(currencies.join());
-
-      $.each(currencies, function (i, p) {
-        $("#currencyExchange").append(
-          $("<option></option>").val(rates[p]).html(p)
-        );
-      });
-      const rate = $("#currencyExchange").val();
-      $("#currencyExchangeRate").html(rate);
-    }
-    $("#dropdown").val(JSON.stringify(country));
-  }
-
-  // AJAX Requests
-
-  function getCountryList() {
-    let countries;
-    $.ajax({
-      dataType: "json",
-      async: false,
-      url: "./data/getAllNamesCodesFromJSON.php",
-
-      success: function (data) {
-        countries = data.sort((a, b) => a.name.localeCompare(b.name));
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(textStatus, errorThrown);
-      },
-    });
-    return countries;
-  }
-
-  function getCountryBordersFromCca3(cca3) {
-    let latlngs;
-    $.ajax({
-      dataType: "json",
-      async: false,
-      url: "./data/getBorderByCodeFromJSON.php",
-      data: {
-        cca3,
-      },
-      success: function (data) {
-        if (data.type == "Polygon") {
-          latlngs = L.GeoJSON.coordsToLatLngs(data.coordinates, 1, false);
-        } else {
-          latlngs = L.GeoJSON.coordsToLatLngs(data.coordinates, 2, false);
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(textStatus, errorThrown);
-      },
-    });
-    return latlngs;
-  }
-
-  function getCapitals(countryList) {
-    countryList;
-    $.ajax({
-      dataType: "json",
-      async: false,
-      url: "./data/getCapitalsData.php",
-      success: function (data) {
-        if (data.status.name == "ok") {
-          countryList.forEach((country) => {
-            data.data.data.forEach((countryData) => {
-              if (country.cca3 == countryData.iso3) {
-                country.capital = countryData.capital;
-              }
-            });
-          });
+              );
+            }
+          }
         } else {
           alert(data.status.name);
         }
@@ -492,212 +633,5 @@ $(document).ready(function () {
         console.log(textStatus, errorThrown);
       },
     });
-    return countryList;
-  }
-
-  function getLatlngsByName(name) {
-    let latlngs;
-    $.ajax({
-      dataType: "json",
-      async: false,
-      url: "./data/getLatlngByNameData.php",
-      data: {
-        name,
-      },
-      success: function (data) {
-        if (data.status.name == "ok") {
-          latlngs = data.data;
-        } else {
-          alert(data.status.name);
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(textStatus, errorThrown);
-      },
-    });
-
-    return latlngs;
-  }
-
-  function getCountryInfoFromCca3(cca3) {
-    let countryInfo;
-    $.ajax({
-      dataType: "json",
-      async: false,
-      url: "./data/getCountryInfoFromCodeData.php",
-      data: {
-        cca3,
-      },
-      success: function (data) {
-        if (data.status.name == "ok") {
-          countryInfo = data.data;
-        } else {
-          alert(data.status.name);
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(textStatus, errorThrown);
-      },
-    });
-    return countryInfo;
-  }
-
-  function getWeatherInfo(capital) {
-    let weatherInfo;
-    $.ajax({
-      dataType: "json",
-      async: false,
-      url: "./data/getWeatherDataFromCoords.php",
-      data: {
-        capital,
-      },
-      success: function (data) {
-        if (data.status.name == "ok") {
-          weatherInfo = data.data;
-        } else {
-          alert(data.status.name);
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(textStatus, errorThrown);
-      },
-    });
-    return weatherInfo;
-  }
-
-  function getAirportsByCca2(cca2) {
-    let airports;
-    $.ajax({
-      dataType: "json",
-      async: false,
-      url: "./data/getAirportsByCca2.php",
-      data: {
-        cca2,
-      },
-      success: function (data) {
-        if (data.status.name == "ok") {
-          airports = data.data;
-        } else {
-          alert(data.status.name);
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(textStatus, errorThrown);
-      },
-    });
-    return airports;
-  }
-
-  function getCitiesByCca2(cca2) {
-    let cities;
-    $.ajax({
-      dataType: "json",
-      async: false,
-      url: "./data/getCitiesByCca2.php",
-      data: {
-        cca2,
-      },
-      success: function (data) {
-        if (data.status.name == "ok") {
-          cities = data.data;
-        } else {
-          alert(data.status.name);
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(textStatus, errorThrown);
-      },
-    });
-    return cities;
-  }
-
-  function getListOfCurrencies() {
-    let list;
-    $.ajax({
-      dataType: "json",
-      async: false,
-      url: "./data/getListOfCurrencies.php",
-      success: function (data) {
-        if (data.status.name == "ok") {
-          list = data.data;
-        } else {
-          alert(data.status.name);
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(textStatus, errorThrown);
-      },
-    });
-    return list;
-  }
-
-  function getCurrencyRates(currencies) {
-    let rates;
-    $.ajax({
-      dataType: "json",
-      async: false,
-      url: "./data/getCurrencyRates.php",
-      data: {
-        currencies,
-      },
-      success: function (data) {
-        if (data.status.name == "ok") {
-          rates = data.data.rates;
-        } else {
-          alert(data.status.name);
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(textStatus, errorThrown);
-      },
-    });
-    return rates;
-  }
-
-  function getLatestNews(name) {
-    let news;
-    $.ajax({
-      dataType: "json",
-      async: false,
-      url: "./data/getNewsByCountry.php",
-      data: {
-        name,
-      },
-      success: function (data) {
-        if (data.status.name == "ok") {
-          news = data.data;
-        } else {
-          alert(data.status.name);
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(textStatus, errorThrown);
-      },
-    });
-    return news;
-  }
-
-  function getCountryNameFromCoords(lat, lng) {
-    let info;
-    $.ajax({
-      dataType: "json",
-      async: false,
-      url: "./data/getCountryNameFromCoords.php",
-      data: {
-        lat,
-        lng,
-      },
-      success: function (data) {
-        if (data.status.name == "ok") {
-          info = data.data;
-        } else {
-          alert(data.status.name);
-        }
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log(textStatus, errorThrown);
-      },
-    });
-    return info;
   }
 });
